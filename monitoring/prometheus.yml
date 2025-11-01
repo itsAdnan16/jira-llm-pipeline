@@ -1,0 +1,11 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'jira-scraper'
+    static_configs:
+      - targets: ['scraper:9090']
+        labels:
+          service: 'jira-llm-pipeline'
+
