@@ -1,0 +1,104 @@
+{
+  "key": "HADOOP-30",
+  "project": "",
+  "fields": {
+    "summary": "DFS shell: support for ls -r and cat",
+    "description": "patch attached",
+    "created": "2006-02-10 08:14:53+00:00",
+    "updated": "2006-08-03 17:46:27+00:00",
+    "status": {
+      "self": "https://issues.apache.org/jira/rest/api/2/status/6",
+      "description": "The issue is considered finished, the resolution is correct. Issues which are not closed can be reopened.",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/statuses/closed.png",
+      "name": "Closed",
+      "id": "6",
+      "statusCategory": {
+        "self": "https://issues.apache.org/jira/rest/api/2/statuscategory/3",
+        "id": 3,
+        "key": "done",
+        "colorName": "green",
+        "name": "Done"
+      }
+    },
+    "priority": {
+      "self": "https://issues.apache.org/jira/rest/api/2/priority/3",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/priorities/major.svg",
+      "name": "Major",
+      "id": "3"
+    },
+    "assignee": null,
+    "reporter": {
+      "self": "https://issues.apache.org/jira/rest/api/2/user?username=michel_tourn",
+      "name": "michel_tourn",
+      "key": "michel_tourn",
+      "avatarUrls": {
+        "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+        "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+        "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+        "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+      },
+      "displayName": "Michel Tourn",
+      "active": true,
+      "timeZone": "America/New_York"
+    },
+    "issue_type": {
+      "self": "https://issues.apache.org/jira/rest/api/2/issuetype/4",
+      "id": "4",
+      "description": "An improvement or enhancement to an existing feature or task.",
+      "iconUrl": "https://issues.apache.org/jira/secure/viewavatar?size=xsmall&avatarId=21140&avatarType=issuetype",
+      "name": "Improvement",
+      "subtask": false,
+      "avatarId": 21140
+    },
+    "resolution": {
+      "self": "https://issues.apache.org/jira/rest/api/2/resolution/1",
+      "id": "1",
+      "description": "A fix for this issue is checked into the tree and tested.",
+      "name": "Fixed"
+    },
+    "resolutiondate": "2006-02-11 02:37:16+00:00",
+    "comments": null
+  },
+  "comments": [
+    {
+      "id": "12365795",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=michel_tourn",
+        "name": "michel_tourn",
+        "key": "michel_tourn",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Michel Tourn",
+        "active": true,
+        "timeZone": "America/New_York"
+      },
+      "body": "Example combined usage:\nbin/nutch ndfs -lsr /user/michel/ | cut -f 1 | xargs -i bin/nutch ndfs -cat {}\n\nlists all files/dirs, writes them all to stdout\n\n",
+      "created": "2006-02-10 08:17:14+00:00",
+      "updated": "2006-02-10 08:17:14+00:00"
+    },
+    {
+      "id": "12365930",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "I just applied this.  Thanks, Michel!",
+      "created": "2006-02-11 02:37:16+00:00",
+      "updated": "2006-02-11 02:37:16+00:00"
+    }
+  ]
+}

@@ -1,0 +1,257 @@
+{
+  "key": "HADOOP-129",
+  "project": "HADOOP",
+  "fields": {
+    "summary": "FileSystem should not name files with java.io.File",
+    "description": "In Hadoop's FileSystem API, files are currently named using java.io.File.  This is confusing, as many methods on that class are inappropriate to call on Hadoop paths.  For example, calling isDirectory(), exists(), etc. on a java.io.File is not the same as calling FileSystem.isDirectory() or FileSystem.exists() passing that same file.  Using java.io.File also makes correct operation on Windows difficult, since java.io.File operates differently on Windows in order to accomodate Windows path names.  For example, new File(\"/foo\") is not absolute on Windows, and prints its path as \"\\\\foo\", which causes confusion.\n\nTo fix this we could replace the uses of java.io.File in the FileSystem API with String, a new FileName class, or perhaps java.net.URI.  The advantage of URI is that it can also naturally include the namenode host and port.  The disadvantage is that URI does not support tree operations like getParent().\n\nThis change will cause a lot of incompatibility.  Thus it should probably be made early in a development cycle in order to maximize the time for folks to adapt to it.",
+    "created": "2006-04-11 03:05:09+00:00",
+    "updated": "2006-08-03 17:46:35+00:00",
+    "status": {
+      "self": "https://issues.apache.org/jira/rest/api/2/status/6",
+      "description": "The issue is considered finished, the resolution is correct. Issues which are not closed can be reopened.",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/statuses/closed.png",
+      "name": "Closed",
+      "id": "6",
+      "statusCategory": {
+        "self": "https://issues.apache.org/jira/rest/api/2/statuscategory/3",
+        "id": 3,
+        "key": "done",
+        "colorName": "green",
+        "name": "Done"
+      }
+    },
+    "priority": {
+      "self": "https://issues.apache.org/jira/rest/api/2/priority/3",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/priorities/major.svg",
+      "name": "Major",
+      "id": "3"
+    },
+    "assignee": {
+      "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+      "name": "cutting",
+      "key": "cutting",
+      "avatarUrls": {
+        "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+        "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+        "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+        "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+      },
+      "displayName": "Doug Cutting",
+      "active": true,
+      "timeZone": "America/Los_Angeles"
+    },
+    "reporter": {
+      "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+      "name": "cutting",
+      "key": "cutting",
+      "avatarUrls": {
+        "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+        "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+        "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+        "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+      },
+      "displayName": "Doug Cutting",
+      "active": true,
+      "timeZone": "America/Los_Angeles"
+    },
+    "issue_type": {
+      "self": "https://issues.apache.org/jira/rest/api/2/issuetype/4",
+      "id": "4",
+      "description": "An improvement or enhancement to an existing feature or task.",
+      "iconUrl": "https://issues.apache.org/jira/secure/viewavatar?size=xsmall&avatarId=21140&avatarType=issuetype",
+      "name": "Improvement",
+      "subtask": false,
+      "avatarId": 21140
+    },
+    "resolution": {
+      "self": "https://issues.apache.org/jira/rest/api/2/resolution/1",
+      "id": "1",
+      "description": "A fix for this issue is checked into the tree and tested.",
+      "name": "Fixed"
+    },
+    "resolutiondate": "2006-04-19 00:06:17+00:00",
+    "comments": null
+  },
+  "comments": [
+    {
+      "id": "12373924",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=ab",
+        "name": "ab",
+        "key": "ab",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?ownerId=ab&avatarId=36393",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=ab&avatarId=36393",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=ab&avatarId=36393",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=ab&avatarId=36393"
+        },
+        "displayName": "Andrzej Bialecki",
+        "active": true,
+        "timeZone": "Europe/Berlin"
+      },
+      "body": "I think we should change this to a Hadoop-specific class, e.g. FileName (not a simple String - too limiting). FileName-s could only be used when holding a reference to a valid instance of FileSystem - this way operations like getParent() could always consult FileSystem-specific routines to resolve DFS names to real names in case of LocalFileSystem.\n\nI also propose that this class should be versioned, and contain some File-like metadata - for now I'm thinking specifically about creation / modification time.",
+      "created": "2006-04-11 04:36:40+00:00",
+      "updated": "2006-04-11 04:36:40+00:00"
+    },
+    {
+      "id": "12373928",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": ">  I think we should change this to a Hadoop-specific class, e.g. FileName.\n\nWhy not URI?  What required methods are missing from URI?  Conversely, what URI methods do you think might cause problems?\n\nPartially answering my own question, with URIs we'd have to check the schema host and port matched the fs when implementing each FS method.  In other words, given that we need a FileSystem instance to do anything, the schema, host and port fields of the URI are usually redundant and force us to perform error checking.  However these same fields would be useful when specifying MapReduce input and output directories, in command lines, etc., permitting one to easily specify non-default FileSystem implementations.\n\nNote that I don't think URI buys us interoperability with other systems.  So we should only use it if we think it will make writing Hadoop easier: if it consists of code that we'd need to mostly need to write anyway.\n\nA side-benefit of URI is that it provides standards-defined filename syntax.  We don't have to figure out how to, e.g., escape things, or how backslashes and colons should be treated, etc.  We can simply point to a standard.\n\n> I also propose that this class should be versioned, and contain some File-like metadata - for now I'm thinking specifically about creation / modification time.\n\nThis works so long as files are write-once.  But if they can be appended to or overwritten then this information could get stale.",
+      "created": "2006-04-11 04:58:51+00:00",
+      "updated": "2006-04-11 04:58:51+00:00"
+    },
+    {
+      "id": "12374087",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "URI actually *can* compute parent directory.  For example:\n\nURI subDir = new URI(\"/foo/bar/baz/\");\nURI parent = subDir.resolve(\"..\");\n\nParent.toString() returns \"/foo/bar/\".\n\nSo I think that URI has the features we want for filenames and not much else.  Am I missing something?\n\nIt might also be useful to implement a URLStreamHandler, so that one can create \"hdfs:\" urls and use them whereever java accepts URLs, e.g., in classloaders, etc.  But the URL class doesn't support relative path name resolution, the primary feature we require for names.\n\nUnless there are objections, I'll start exploring replacing the uses of java.io.File with java.net.URI.\n\nMy thinking is that we remove rather than deprecate the old methods.  This makes the change incompatible, but I think we really want to get rid of the use of java.io.File.  I'm willing to update Nutch & unit tests as required, but this may break others' code.  Should we instead deprecate these in Hadoop 0.2 and then remove them in 0.3?  Thoughts?",
+      "created": "2006-04-12 02:22:26+00:00",
+      "updated": "2006-04-12 02:22:26+00:00"
+    },
+    {
+      "id": "12374115",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "Working through this more, I'm now leaning away from URI and towards a new class.  It will be easier to replace with a new class, since the API can be made to resemble File.  For example, we have a lot of code that calls 'new File(dir, name)' to construct a file in a subdirectory.  The idiom for doing that with URI's is slightly more complicated, and would require a utility method somewhere.  Similarly for file.getParentFile(), etc.\n\nSo now I'm leaning towards a class named \"Path\" that's mostly a drop-in replacement for File, except it doesn't support FS operations like exists(), mkdir(), delete(), etc.",
+      "created": "2006-04-12 07:33:33+00:00",
+      "updated": "2006-04-12 07:33:33+00:00"
+    },
+    {
+      "id": "12374671",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=eric14",
+        "name": "eric14",
+        "key": "eric14",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Eric Baldeschwieler",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "It could contain a URI... ",
+      "created": "2006-04-16 12:41:54+00:00",
+      "updated": "2006-04-16 12:41:54+00:00"
+    },
+    {
+      "id": "12374672",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=ibolotin",
+        "name": "ibolotin",
+        "key": "ibolotin",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Igor Bolotin",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "Does it make sense to create class that would extend File and override unsupported operations to throw UnsupportedOperationException?",
+      "created": "2006-04-16 12:49:23+00:00",
+      "updated": "2006-04-16 12:49:23+00:00"
+    },
+    {
+      "id": "12374824",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "> Does it make sense to create class that would extend File and override unsupported operations to throw UnsupportedOperationException?\n\nI'm not sure what advantages that would have.  Is the idea to detect errors at runtime rather than at compile time?  I've just about finished a patch adding a new class.  I'll post it later today.",
+      "created": "2006-04-18 05:32:44+00:00",
+      "updated": "2006-04-18 05:32:44+00:00"
+    },
+    {
+      "id": "12374827",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "Here's a patch that replaces uses of java.io.File in Hadoop's FileSystem and MapReduce API's with a new class named Path.  I left some existing File-based methods, now deprecated, sufficient for Nutch to run w/o alteration.  I'd like to remove the deprecated methods after the 0.2 release.\n\nI believe that the only incompatible change is that dfs.data.dir and mapred.local.dir, when lists of directories, must now be comma-separated and may no longer be space-separated.  This is in order to make things work better on Windows.\n\nI have tested this in standalone and pseudo-distributed operation on both Linux and Windows, with unit tests and with the Nutch crawler.\n\nBarring objections, I will apply this tomorrow.",
+      "created": "2006-04-18 06:13:59+00:00",
+      "updated": "2006-04-18 06:13:59+00:00"
+    },
+    {
+      "id": "12374967",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "I just committed this.  It was a big change.  I hope I haven't broken anything!",
+      "created": "2006-04-19 00:06:17+00:00",
+      "updated": "2006-04-19 00:06:17+00:00"
+    }
+  ]
+}

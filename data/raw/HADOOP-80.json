@@ -1,0 +1,197 @@
+{
+  "key": "HADOOP-80",
+  "project": "",
+  "fields": {
+    "summary": "binary key",
+    "description": "I needed a binary key type, so I extended BytesWritable to be comparable also.",
+    "created": "2006-03-14 15:18:51+00:00",
+    "updated": "2006-08-03 17:46:31+00:00",
+    "status": {
+      "self": "https://issues.apache.org/jira/rest/api/2/status/6",
+      "description": "The issue is considered finished, the resolution is correct. Issues which are not closed can be reopened.",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/statuses/closed.png",
+      "name": "Closed",
+      "id": "6",
+      "statusCategory": {
+        "self": "https://issues.apache.org/jira/rest/api/2/statuscategory/3",
+        "id": 3,
+        "key": "done",
+        "colorName": "green",
+        "name": "Done"
+      }
+    },
+    "priority": {
+      "self": "https://issues.apache.org/jira/rest/api/2/priority/3",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/priorities/major.svg",
+      "name": "Major",
+      "id": "3"
+    },
+    "assignee": {
+      "self": "https://issues.apache.org/jira/rest/api/2/user?username=omalley",
+      "name": "omalley",
+      "key": "owen.omalley",
+      "avatarUrls": {
+        "48x48": "https://issues.apache.org/jira/secure/useravatar?ownerId=owen.omalley&avatarId=54139",
+        "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=owen.omalley&avatarId=54139",
+        "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=owen.omalley&avatarId=54139",
+        "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=owen.omalley&avatarId=54139"
+      },
+      "displayName": "Owen O'Malley",
+      "active": true,
+      "timeZone": "America/Los_Angeles"
+    },
+    "reporter": {
+      "self": "https://issues.apache.org/jira/rest/api/2/user?username=omalley",
+      "name": "omalley",
+      "key": "owen.omalley",
+      "avatarUrls": {
+        "48x48": "https://issues.apache.org/jira/secure/useravatar?ownerId=owen.omalley&avatarId=54139",
+        "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=owen.omalley&avatarId=54139",
+        "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=owen.omalley&avatarId=54139",
+        "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=owen.omalley&avatarId=54139"
+      },
+      "displayName": "Owen O'Malley",
+      "active": true,
+      "timeZone": "America/Los_Angeles"
+    },
+    "issue_type": {
+      "self": "https://issues.apache.org/jira/rest/api/2/issuetype/2",
+      "id": "2",
+      "description": "A new feature of the product, which has yet to be developed.",
+      "iconUrl": "https://issues.apache.org/jira/secure/viewavatar?size=xsmall&avatarId=21141&avatarType=issuetype",
+      "name": "New Feature",
+      "subtask": false,
+      "avatarId": 21141
+    },
+    "resolution": {
+      "self": "https://issues.apache.org/jira/rest/api/2/resolution/1",
+      "id": "1",
+      "description": "A fix for this issue is checked into the tree and tested.",
+      "name": "Fixed"
+    },
+    "resolutiondate": "2006-03-22 02:47:17+00:00",
+    "comments": null
+  },
+  "comments": [
+    {
+      "id": "12370406",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "Overall this looks good.  A couple of questions:\n\n1. Why call setSize(0) in read()?  This looks like a no-op.  Am I missing something?\n\n2. Why bother to use md5 for hashCode()?  That could be expensive.  Why not implement this like java.util.Arrays.hashCode() and UTF8.hashCode():\n\n  public int hashCode() {\n    int hash = 1;\n    for (int i = 0; i < size; i++)\n      hash = (31 * hash) + (int)bytes[i];\n    return hash;\n  }\n\n",
+      "created": "2006-03-15 04:10:27+00:00",
+      "updated": "2006-03-15 04:10:27+00:00"
+    },
+    {
+      "id": "12370477",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=omalley",
+        "name": "omalley",
+        "key": "owen.omalley",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?ownerId=owen.omalley&avatarId=54139",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=owen.omalley&avatarId=54139",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=owen.omalley&avatarId=54139",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=owen.omalley&avatarId=54139"
+        },
+        "displayName": "Owen O'Malley",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "> 1. Why call setSize(0) in read()? This looks like a no-op. Am I missing something?\n\nYeah, that is a little subtle and I should have commented it better. Basically, when I do the second setSize, it may call setCapacity, which will copy the current data. If the current size is 0, then it won't copy anything. It won't change the user visible behavior, but will save a useless copy.\n\n> 2. Why bother to use md5 for hashCode()?  That could be expensive.  Why not implement this like \n> java.util.Arrays.hashCode() and UTF8.hashCode():\n\nYeah, I considered doing something lighter than md5, but using md5 prevents pathological cases from doing bad things. We also use md5 a lot around here, so it is a really useful default for us, but it might make sense to have a lighter hash alternative. However, since in map/reduce the hash function is only used for partitioning the map output, it seemed better to use a known good hash function than taking a chance on a fast but sloppy hash function.\n",
+      "created": "2006-03-15 15:22:52+00:00",
+      "updated": "2006-03-15 15:22:52+00:00"
+    },
+    {
+      "id": "12370483",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=omalley",
+        "name": "omalley",
+        "key": "owen.omalley",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?ownerId=owen.omalley&avatarId=54139",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=owen.omalley&avatarId=54139",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=owen.omalley&avatarId=54139",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=owen.omalley&avatarId=54139"
+        },
+        "displayName": "Owen O'Malley",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "This updated patch handles the case of shrinking the buffer's capacity. It also adds testing code for that situation into the unit test.",
+      "created": "2006-03-15 16:01:23+00:00",
+      "updated": "2006-03-15 16:01:23+00:00"
+    },
+    {
+      "id": "12370606",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "If we think that the default java hash function is bad, then we should probably switch it in all of the places where we hash, e.g., in UTF8, here, etc.  For now I will: (a) add a static hashBytes() method to WritableComparable, use it in BytesWritable().  Then, if we someday decide to change the hash function then we'll have a single place to do it.  Allocating a new digester per call to hashCode() seems expensive (although I have not benchmarked this).\n\nMapReduce does use the hash function by default for partitioning, but HashMaps will also use it, so MapReduce is not the only client.",
+      "created": "2006-03-16 07:41:15+00:00",
+      "updated": "2006-03-16 07:41:15+00:00"
+    },
+    {
+      "id": "12370609",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "I just committed this as r386219.",
+      "created": "2006-03-16 07:51:36+00:00",
+      "updated": "2006-03-16 07:51:36+00:00"
+    },
+    {
+      "id": "12371278",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=omalley",
+        "name": "omalley",
+        "key": "owen.omalley",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?ownerId=owen.omalley&avatarId=54139",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=owen.omalley&avatarId=54139",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=owen.omalley&avatarId=54139",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=owen.omalley&avatarId=54139"
+        },
+        "displayName": "Owen O'Malley",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "Doug committed this.",
+      "created": "2006-03-22 02:47:17+00:00",
+      "updated": "2006-03-22 02:47:17+00:00"
+    }
+  ]
+}

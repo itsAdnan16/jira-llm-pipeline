@@ -1,0 +1,104 @@
+{
+  "key": "HADOOP-209",
+  "project": "HADOOP",
+  "fields": {
+    "summary": "Add a program to recursively copy directories across file systems",
+    "description": "A useful feature would be a simple command to copy directories recursively across filesystems. The source and destination path should be specified using a filesystem-neutral URI, such as:\n\nhadoop cp dfs://namenode1:port1/path/to/srcdir file:///path/to/local/destination/dir\n\n\"cp\" command would invoke a map-reduce program to copy files recursively.\n\nI willl attach a patch as soon as svn is up and running.",
+    "created": "2006-05-11 06:05:18+00:00",
+    "updated": "2006-08-03 17:46:41+00:00",
+    "status": {
+      "self": "https://issues.apache.org/jira/rest/api/2/status/6",
+      "description": "The issue is considered finished, the resolution is correct. Issues which are not closed can be reopened.",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/statuses/closed.png",
+      "name": "Closed",
+      "id": "6",
+      "statusCategory": {
+        "self": "https://issues.apache.org/jira/rest/api/2/statuscategory/3",
+        "id": 3,
+        "key": "done",
+        "colorName": "green",
+        "name": "Done"
+      }
+    },
+    "priority": {
+      "self": "https://issues.apache.org/jira/rest/api/2/priority/3",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/priorities/major.svg",
+      "name": "Major",
+      "id": "3"
+    },
+    "assignee": null,
+    "reporter": {
+      "self": "https://issues.apache.org/jira/rest/api/2/user?username=milindb",
+      "name": "milindb",
+      "key": "milindb",
+      "avatarUrls": {
+        "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+        "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+        "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+        "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+      },
+      "displayName": "Milind Barve",
+      "active": true,
+      "timeZone": "America/Los_Angeles"
+    },
+    "issue_type": {
+      "self": "https://issues.apache.org/jira/rest/api/2/issuetype/2",
+      "id": "2",
+      "description": "A new feature of the product, which has yet to be developed.",
+      "iconUrl": "https://issues.apache.org/jira/secure/viewavatar?size=xsmall&avatarId=21141&avatarType=issuetype",
+      "name": "New Feature",
+      "subtask": false,
+      "avatarId": 21141
+    },
+    "resolution": {
+      "self": "https://issues.apache.org/jira/rest/api/2/resolution/1",
+      "id": "1",
+      "description": "A fix for this issue is checked into the tree and tested.",
+      "name": "Fixed"
+    },
+    "resolutiondate": "2006-05-13 04:35:21+00:00",
+    "comments": null
+  },
+  "comments": [
+    {
+      "id": "12379137",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=milindb",
+        "name": "milindb",
+        "key": "milindb",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Milind Barve",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "Here is a patch for recursively copying directories across multiple file-systems. Consists of addition of a cp command to bin/hadoop, a mapreduce program to copy files, and a unit test that tests all combinations of filesystems (i.e. 4 combinations of local, and dfs).",
+      "created": "2006-05-12 03:31:07+00:00",
+      "updated": "2006-05-12 03:31:07+00:00"
+    },
+    {
+      "id": "12383300",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "I just committed this.  Thanks, Milind!",
+      "created": "2006-05-13 04:35:21+00:00",
+      "updated": "2006-05-13 04:35:21+00:00"
+    }
+  ]
+}

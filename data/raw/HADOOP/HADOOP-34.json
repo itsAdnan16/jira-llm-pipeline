@@ -1,0 +1,104 @@
+{
+  "key": "HADOOP-34",
+  "project": "HADOOP",
+  "fields": {
+    "summary": "Build Paths Relative to PWD in build.xml",
+    "description": "In the build.xml file, many paths are defined in terms of the present working directory (PWD) instead of relative to the location of the build.xml. Thus, whenever trying to compile from a directory other than the hadoop root, errors such as this appear:\n\nBUILD FAILED\n/home/jeremy/cvs/hadoop/build.xml:109: org.apache.jasper.JasperException: The -uriroot option must specify a pre-existing directory\n\nI have scripts / vim parameters that connect to other machines for compiling using ssh, and am not necessarily always in the root whenever I compile.\n\nI am attaching a patch which sets all paths relative to ${basedir}, and removes the override of ${basedir} to the PWD. Please let me know if there are reasons why the build environment must be relative to the working directory.",
+    "created": "2006-02-14 02:00:26+00:00",
+    "updated": "2006-08-03 17:46:27+00:00",
+    "status": {
+      "self": "https://issues.apache.org/jira/rest/api/2/status/6",
+      "description": "The issue is considered finished, the resolution is correct. Issues which are not closed can be reopened.",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/statuses/closed.png",
+      "name": "Closed",
+      "id": "6",
+      "statusCategory": {
+        "self": "https://issues.apache.org/jira/rest/api/2/statuscategory/3",
+        "id": 3,
+        "key": "done",
+        "colorName": "green",
+        "name": "Done"
+      }
+    },
+    "priority": {
+      "self": "https://issues.apache.org/jira/rest/api/2/priority/5",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/priorities/trivial.svg",
+      "name": "Trivial",
+      "id": "5"
+    },
+    "assignee": null,
+    "reporter": {
+      "self": "https://issues.apache.org/jira/rest/api/2/user?username=jbensley",
+      "name": "jbensley",
+      "key": "jbensley",
+      "avatarUrls": {
+        "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+        "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+        "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+        "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+      },
+      "displayName": "Jeremy Bensley",
+      "active": true,
+      "timeZone": "Etc/UTC"
+    },
+    "issue_type": {
+      "self": "https://issues.apache.org/jira/rest/api/2/issuetype/1",
+      "id": "1",
+      "description": "A problem which impairs or prevents the functions of the product.",
+      "iconUrl": "https://issues.apache.org/jira/secure/viewavatar?size=xsmall&avatarId=21133&avatarType=issuetype",
+      "name": "Bug",
+      "subtask": false,
+      "avatarId": 21133
+    },
+    "resolution": {
+      "self": "https://issues.apache.org/jira/rest/api/2/resolution/1",
+      "id": "1",
+      "description": "A fix for this issue is checked into the tree and tested.",
+      "name": "Fixed"
+    },
+    "resolutiondate": "2006-02-14 04:03:32+00:00",
+    "comments": null
+  },
+  "comments": [
+    {
+      "id": "12366213",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=jbensley",
+        "name": "jbensley",
+        "key": "jbensley",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Jeremy Bensley",
+        "active": true,
+        "timeZone": "Etc/UTC"
+      },
+      "body": "Proposed patch for issue",
+      "created": "2006-02-14 02:01:49+00:00",
+      "updated": "2006-02-14 02:01:49+00:00"
+    },
+    {
+      "id": "12366233",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "I just comitted this.  Thanks!",
+      "created": "2006-02-14 04:03:32+00:00",
+      "updated": "2006-02-14 04:03:32+00:00"
+    }
+  ]
+}

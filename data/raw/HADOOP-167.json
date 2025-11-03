@@ -1,0 +1,177 @@
+{
+  "key": "HADOOP-167",
+  "project": "",
+  "fields": {
+    "summary": "reducing the number of Configuration & JobConf objects created",
+    "description": "Currently, Configuration and JobConf objects are created many times during executing a job. In particular, the Task Tracker creates a lot of them. They both clutter up the logs and parse the xml config files over and over again.",
+    "created": "2006-04-26 10:52:22+00:00",
+    "updated": "2006-08-03 17:46:37+00:00",
+    "status": {
+      "self": "https://issues.apache.org/jira/rest/api/2/status/6",
+      "description": "The issue is considered finished, the resolution is correct. Issues which are not closed can be reopened.",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/statuses/closed.png",
+      "name": "Closed",
+      "id": "6",
+      "statusCategory": {
+        "self": "https://issues.apache.org/jira/rest/api/2/statuscategory/3",
+        "id": 3,
+        "key": "done",
+        "colorName": "green",
+        "name": "Done"
+      }
+    },
+    "priority": {
+      "self": "https://issues.apache.org/jira/rest/api/2/priority/3",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/priorities/major.svg",
+      "name": "Major",
+      "id": "3"
+    },
+    "assignee": {
+      "self": "https://issues.apache.org/jira/rest/api/2/user?username=omalley",
+      "name": "omalley",
+      "key": "owen.omalley",
+      "avatarUrls": {
+        "48x48": "https://issues.apache.org/jira/secure/useravatar?ownerId=owen.omalley&avatarId=54139",
+        "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=owen.omalley&avatarId=54139",
+        "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=owen.omalley&avatarId=54139",
+        "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=owen.omalley&avatarId=54139"
+      },
+      "displayName": "Owen O'Malley",
+      "active": true,
+      "timeZone": "America/Los_Angeles"
+    },
+    "reporter": {
+      "self": "https://issues.apache.org/jira/rest/api/2/user?username=omalley",
+      "name": "omalley",
+      "key": "owen.omalley",
+      "avatarUrls": {
+        "48x48": "https://issues.apache.org/jira/secure/useravatar?ownerId=owen.omalley&avatarId=54139",
+        "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=owen.omalley&avatarId=54139",
+        "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=owen.omalley&avatarId=54139",
+        "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=owen.omalley&avatarId=54139"
+      },
+      "displayName": "Owen O'Malley",
+      "active": true,
+      "timeZone": "America/Los_Angeles"
+    },
+    "issue_type": {
+      "self": "https://issues.apache.org/jira/rest/api/2/issuetype/4",
+      "id": "4",
+      "description": "An improvement or enhancement to an existing feature or task.",
+      "iconUrl": "https://issues.apache.org/jira/secure/viewavatar?size=xsmall&avatarId=21140&avatarType=issuetype",
+      "name": "Improvement",
+      "subtask": false,
+      "avatarId": 21140
+    },
+    "resolution": {
+      "self": "https://issues.apache.org/jira/rest/api/2/resolution/1",
+      "id": "1",
+      "description": "A fix for this issue is checked into the tree and tested.",
+      "name": "Fixed"
+    },
+    "resolutiondate": "2006-04-29 01:41:56+00:00",
+    "comments": null
+  },
+  "comments": [
+    {
+      "id": "12376386",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=omalley",
+        "name": "omalley",
+        "key": "owen.omalley",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?ownerId=owen.omalley&avatarId=54139",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=owen.omalley&avatarId=54139",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=owen.omalley&avatarId=54139",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=owen.omalley&avatarId=54139"
+        },
+        "displayName": "Owen O'Malley",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "This patch removes a lot of the extra JobConfs from the TaskTracker. In particular, it does not read the config files for each map output as it is transfered to a reduce. It also adds a new constructor for JobConf(Class) and makes the old JobConf() constructor read the mapred-defaults.xml. Unless Nutch makes heavy use of the JobConf(Configuration) and JobConf(Configuration,Class) constructors, I think we should depriciate them. There really isn't any advantage to having a separate Configuration object.",
+      "created": "2006-04-26 10:57:23+00:00",
+      "updated": "2006-04-26 10:57:23+00:00"
+    },
+    {
+      "id": "12376516",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=michel_tourn",
+        "name": "michel_tourn",
+        "key": "michel_tourn",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Michel Tourn",
+        "active": true,
+        "timeZone": "America/New_York"
+      },
+      "body": "Avoiding the multiple config-loading messages is a good thing.\nThis could also be controlled with a verbosity  / logging level setting.\n\nPlease don't remove the JobConf(Configuration) constructor.\n\nThis is the only mechanism available to programatically change your Configuration.\nWe rely on this in two ways: \n1. to select from multiple XML config files that correspond to multiple Hadoop systems.\n2. to make some properties (paths) user-dependant.\n\nEx for 1.\n    config_ = new Configuration();\n    config_.addFinalResource(getHadoopAliasConfFile());\n    jobConf_ = new JobConf(config_);\n\nIn fact, it is important for Hadoop to maintain this property:\n ALL uses of a JobConf must be configurable at the outset by the caller by passing in a Configuration object.\n Common examples of such top-level Hadoop entry points: \n     Job submission, MapRed in local mode, DFS client calls.\n\nIn general we should make sure that we don't FORCE \na long lifetime for a 'cached' JobConf object:\nThere are applications that need to use new JobConf-s along the way:\n1. bec. they must first discover properties of the Hadoop cluster (list files, then submit job)\n2. bec. they talk to multiple Hadoop systems (import / export files)\n",
+      "created": "2006-04-27 00:15:58+00:00",
+      "updated": "2006-04-27 00:15:58+00:00"
+    },
+    {
+      "id": "12376517",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=omalley",
+        "name": "omalley",
+        "key": "owen.omalley",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?ownerId=owen.omalley&avatarId=54139",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=owen.omalley&avatarId=54139",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=owen.omalley&avatarId=54139",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=owen.omalley&avatarId=54139"
+        },
+        "displayName": "Owen O'Malley",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "Your example is exactly the same as:\n\njobConf = new JobConf();\njobConf.addFinalResource(getHadoopAliasConfFile());\n\njust without reading the xml files an extra time.",
+      "created": "2006-04-27 00:26:00+00:00",
+      "updated": "2006-04-27 00:26:00+00:00"
+    },
+    {
+      "id": "12376520",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "Can we stop the extra reads caused by addFinalResource() and 'new JobConf(Configuration)' by re-using the hash table instead of re-reading the files?  addFinalResource could simply read that single file, rather than re-read everything.  And 'new JobConf(Configuration)' could clone the contents of the configuration rather than re-reading it, no?  Or even use nested Properties...\n\nOne feature that's currently supported is that Configuration.write() only writes things that differ from the defaults.  This isn't essential, but it's nice.  The way it distinguishes is that defaults are always in a nested properties and non-defaults are always in the top-level properties.",
+      "created": "2006-04-27 00:52:41+00:00",
+      "updated": "2006-04-27 00:52:41+00:00"
+    },
+    {
+      "id": "12376979",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "I just committed this.  Thanks, Owen!",
+      "created": "2006-04-29 01:41:55+00:00",
+      "updated": "2006-04-29 01:41:55+00:00"
+    }
+  ]
+}

@@ -1,0 +1,117 @@
+{
+  "key": "HADOOP-78",
+  "project": "",
+  "fields": {
+    "summary": "rpc commands not buffered",
+    "description": "Calls using Hadoop's RPC framework get sent across the network byte by byte.",
+    "created": "2006-03-14 06:48:27+00:00",
+    "updated": "2006-08-03 17:46:31+00:00",
+    "status": {
+      "self": "https://issues.apache.org/jira/rest/api/2/status/6",
+      "description": "The issue is considered finished, the resolution is correct. Issues which are not closed can be reopened.",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/statuses/closed.png",
+      "name": "Closed",
+      "id": "6",
+      "statusCategory": {
+        "self": "https://issues.apache.org/jira/rest/api/2/statuscategory/3",
+        "id": 3,
+        "key": "done",
+        "colorName": "green",
+        "name": "Done"
+      }
+    },
+    "priority": {
+      "self": "https://issues.apache.org/jira/rest/api/2/priority/3",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/priorities/major.svg",
+      "name": "Major",
+      "id": "3"
+    },
+    "assignee": {
+      "self": "https://issues.apache.org/jira/rest/api/2/user?username=omalley",
+      "name": "omalley",
+      "key": "owen.omalley",
+      "avatarUrls": {
+        "48x48": "https://issues.apache.org/jira/secure/useravatar?ownerId=owen.omalley&avatarId=54139",
+        "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=owen.omalley&avatarId=54139",
+        "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=owen.omalley&avatarId=54139",
+        "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=owen.omalley&avatarId=54139"
+      },
+      "displayName": "Owen O'Malley",
+      "active": true,
+      "timeZone": "America/Los_Angeles"
+    },
+    "reporter": {
+      "self": "https://issues.apache.org/jira/rest/api/2/user?username=omalley",
+      "name": "omalley",
+      "key": "owen.omalley",
+      "avatarUrls": {
+        "48x48": "https://issues.apache.org/jira/secure/useravatar?ownerId=owen.omalley&avatarId=54139",
+        "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=owen.omalley&avatarId=54139",
+        "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=owen.omalley&avatarId=54139",
+        "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=owen.omalley&avatarId=54139"
+      },
+      "displayName": "Owen O'Malley",
+      "active": true,
+      "timeZone": "America/Los_Angeles"
+    },
+    "issue_type": {
+      "self": "https://issues.apache.org/jira/rest/api/2/issuetype/1",
+      "id": "1",
+      "description": "A problem which impairs or prevents the functions of the product.",
+      "iconUrl": "https://issues.apache.org/jira/secure/viewavatar?size=xsmall&avatarId=21133&avatarType=issuetype",
+      "name": "Bug",
+      "subtask": false,
+      "avatarId": 21133
+    },
+    "resolution": {
+      "self": "https://issues.apache.org/jira/rest/api/2/resolution/1",
+      "id": "1",
+      "description": "A fix for this issue is checked into the tree and tested.",
+      "name": "Fixed"
+    },
+    "resolutiondate": "2006-03-14 07:17:51+00:00",
+    "comments": null
+  },
+  "comments": [
+    {
+      "id": "12370268",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=omalley",
+        "name": "omalley",
+        "key": "owen.omalley",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?ownerId=owen.omalley&avatarId=54139",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=owen.omalley&avatarId=54139",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=owen.omalley&avatarId=54139",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=owen.omalley&avatarId=54139"
+        },
+        "displayName": "Owen O'Malley",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "The problem is that the Connection object was doing:\n\nout = new BufferedOutputStream(new FilteredOutputStream(sock.getOutputStream()) { \n// definition of write(byte[], int offset, int length)\n});\n\nThe problem is that the write definition called super.write(byte[], int, int), which did a loop calling write(byte) for each byte. So I changed the definition to call out.write(byte[], int,int), which will send the array in a single call.",
+      "created": "2006-03-14 06:53:58+00:00",
+      "updated": "2006-03-14 06:53:58+00:00"
+    },
+    {
+      "id": "12370271",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "Thanks for catching this, Owen!  This can make a big performance difference!",
+      "created": "2006-03-14 07:17:51+00:00",
+      "updated": "2006-03-14 07:17:51+00:00"
+    }
+  ]
+}

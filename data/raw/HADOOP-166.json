@@ -1,0 +1,157 @@
+{
+  "key": "HADOOP-166",
+  "project": "",
+  "fields": {
+    "summary": "IPC is unable to invoke methods that use interfaces as parameter",
+    "description": "Methods of the implementation class are searched via method name and call parameters that can be implementations of the interfaces defined in the method signature.\n",
+    "created": "2006-04-26 06:12:25+00:00",
+    "updated": "2006-08-03 17:46:37+00:00",
+    "status": {
+      "self": "https://issues.apache.org/jira/rest/api/2/status/6",
+      "description": "The issue is considered finished, the resolution is correct. Issues which are not closed can be reopened.",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/statuses/closed.png",
+      "name": "Closed",
+      "id": "6",
+      "statusCategory": {
+        "self": "https://issues.apache.org/jira/rest/api/2/statuscategory/3",
+        "id": 3,
+        "key": "done",
+        "colorName": "green",
+        "name": "Done"
+      }
+    },
+    "priority": {
+      "self": "https://issues.apache.org/jira/rest/api/2/priority/4",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/priorities/minor.svg",
+      "name": "Minor",
+      "id": "4"
+    },
+    "assignee": {
+      "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+      "name": "cutting",
+      "key": "cutting",
+      "avatarUrls": {
+        "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+        "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+        "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+        "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+      },
+      "displayName": "Doug Cutting",
+      "active": true,
+      "timeZone": "America/Los_Angeles"
+    },
+    "reporter": {
+      "self": "https://issues.apache.org/jira/rest/api/2/user?username=joa23",
+      "name": "joa23",
+      "key": "joa23",
+      "avatarUrls": {
+        "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+        "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+        "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+        "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+      },
+      "displayName": "Stefan Groschupf",
+      "active": true,
+      "timeZone": "Etc/UTC"
+    },
+    "issue_type": {
+      "self": "https://issues.apache.org/jira/rest/api/2/issuetype/4",
+      "id": "4",
+      "description": "An improvement or enhancement to an existing feature or task.",
+      "iconUrl": "https://issues.apache.org/jira/secure/viewavatar?size=xsmall&avatarId=21140&avatarType=issuetype",
+      "name": "Improvement",
+      "subtask": false,
+      "avatarId": 21140
+    },
+    "resolution": {
+      "self": "https://issues.apache.org/jira/rest/api/2/resolution/1",
+      "id": "1",
+      "description": "A fix for this issue is checked into the tree and tested.",
+      "name": "Fixed"
+    },
+    "resolutiondate": "2006-04-27 03:26:32+00:00",
+    "comments": null
+  },
+  "comments": [
+    {
+      "id": "12376364",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=joa23",
+        "name": "joa23",
+        "key": "joa23",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Stefan Groschupf",
+        "active": true,
+        "timeZone": "Etc/UTC"
+      },
+      "body": "A test that shows the problem and a patch suggestion.",
+      "created": "2006-04-26 06:13:46+00:00",
+      "updated": "2006-04-26 06:13:46+00:00"
+    },
+    {
+      "id": "12376385",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "The problem isn't that the parameter is an interface, but rather that the declared class in the implementation is not exactly the same class as the instance passed.  One way to fix this would be to add the list of parameter types of the client method when writing the invocation, since those should match the server implementation, but that would make each RPC call bigger.  Alternately one could, as your patch suggests, search for an appropriate method.  However, your search code is not  quite correct.  The search should be ordered from the implementation class through its superclasses, to find the most specific implementing method.  And searching adds a cost to each RPC, so we'd probably want to cache the results of searches.\n\nSo I think I probably prefer adding the parameter types to the invocation.  This can be easily fixed in ObjectWritable by having it write two class names for Writable parameters: both the declared parameter type and the instance type.",
+      "created": "2006-04-26 10:53:39+00:00",
+      "updated": "2006-04-26 10:53:39+00:00"
+    },
+    {
+      "id": "12376488",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=joa23",
+        "name": "joa23",
+        "key": "joa23",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Stefan Groschupf",
+        "active": true,
+        "timeZone": "Etc/UTC"
+      },
+      "body": "Make sense.\nHere an update as you suggested.\nI renamed the declaredClass into instanceClass in the readObject method, so the change looks much larger as it is, but I found using two variables with the same name not that senseful. \n\nLooks that overall better?\n",
+      "created": "2006-04-26 21:18:28+00:00",
+      "updated": "2006-04-26 21:18:28+00:00"
+    },
+    {
+      "id": "12376548",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "I just committed a fix for this.  Thanks for your help, Stefan!",
+      "created": "2006-04-27 03:26:32+00:00",
+      "updated": "2006-04-27 03:26:32+00:00"
+    }
+  ]
+}

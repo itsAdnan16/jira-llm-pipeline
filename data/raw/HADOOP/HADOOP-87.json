@@ -1,0 +1,197 @@
+{
+  "key": "HADOOP-87",
+  "project": "HADOOP",
+  "fields": {
+    "summary": "SequenceFile performance degrades substantially compression is on and large values are encountered",
+    "description": "The code snippet in quesiton is:\n\n     if (deflateValues) {\n        deflateIn.reset();\n        val.write(deflateIn);\n        deflater.reset();\n        deflater.setInput(deflateIn.getData(), 0, deflateIn.getLength());\n        deflater.finish();\n        while (!deflater.finished()) {\n          int count = deflater.deflate(deflateOut);\n          buffer.write(deflateOut, 0, count);\n        }\n      } else {\n  \nA couple of issues with this code:\n\n1. The value is serialized to the 'deflateIn' buffer which is an instance of 'DataOutputBuffer', this grows as large as needed to store the serialized value and stays as large as the largest serialized value encountered. If, for instance a stream has a single 8MB value followed by several 8KB values the size of the buffer stays at 8MB. The problem is that the *entire* 8MB buffer is always copied over the JNI boundary regardless of the size of the value. We've observed this over several runs where compression performance degrades by a couple of orders of magnitude when a very large value is encountered. Shrinking the buffer fixes the problem.\n\n2. Data is copied lots of times. First the value is serialized into 'deflateIn'. Second, the value is copied over the JNI boundary in *every* iteration of the while loop. Third, the compressed data is copied piecemeal into 'deflateOut'. Finally, it is appended to 'buffer'.\n\n\nProposed fix:\n\n1. Don't let big buffers persist. Allow 'deflateIn' to grow to a *persistent* maximum reasonable size, say 64KB. If a larger value is encountered, grow the buffer in order to process the value, then shrink it back to the maximum size. To do this, we add a 'reset' method which takes a buffer size.\n\n2. Don't use a loop to deflate. The maximum size of the output can be determined by 'maxOutputSize = inputSize * 1.01 + 12'. This is the maximum output size that zlib will produce. We allocate a large enough output buffer and compress everything in 1 pass. The output buffer, of course, needs to shrink as well.\n\n\n",
+    "created": "2006-03-17 06:49:48+00:00",
+    "updated": "2006-08-03 17:46:32+00:00",
+    "status": {
+      "self": "https://issues.apache.org/jira/rest/api/2/status/6",
+      "description": "The issue is considered finished, the resolution is correct. Issues which are not closed can be reopened.",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/statuses/closed.png",
+      "name": "Closed",
+      "id": "6",
+      "statusCategory": {
+        "self": "https://issues.apache.org/jira/rest/api/2/statuscategory/3",
+        "id": 3,
+        "key": "done",
+        "colorName": "green",
+        "name": "Done"
+      }
+    },
+    "priority": {
+      "self": "https://issues.apache.org/jira/rest/api/2/priority/3",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/priorities/major.svg",
+      "name": "Major",
+      "id": "3"
+    },
+    "assignee": {
+      "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+      "name": "cutting",
+      "key": "cutting",
+      "avatarUrls": {
+        "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+        "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+        "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+        "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+      },
+      "displayName": "Doug Cutting",
+      "active": true,
+      "timeZone": "America/Los_Angeles"
+    },
+    "reporter": {
+      "self": "https://issues.apache.org/jira/rest/api/2/user?username=sameerp",
+      "name": "sameerp",
+      "key": "sameerp",
+      "avatarUrls": {
+        "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=34061",
+        "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=34061",
+        "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=34061",
+        "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=34061"
+      },
+      "displayName": "Sameer Paranjpye",
+      "active": true,
+      "timeZone": "America/Los_Angeles"
+    },
+    "issue_type": {
+      "self": "https://issues.apache.org/jira/rest/api/2/issuetype/4",
+      "id": "4",
+      "description": "An improvement or enhancement to an existing feature or task.",
+      "iconUrl": "https://issues.apache.org/jira/secure/viewavatar?size=xsmall&avatarId=21140&avatarType=issuetype",
+      "name": "Improvement",
+      "subtask": false,
+      "avatarId": 21140
+    },
+    "resolution": {
+      "self": "https://issues.apache.org/jira/rest/api/2/resolution/1",
+      "id": "1",
+      "description": "A fix for this issue is checked into the tree and tested.",
+      "name": "Fixed"
+    },
+    "resolutiondate": "2006-03-22 05:42:02+00:00",
+    "comments": null
+  },
+  "comments": [
+    {
+      "id": "12370876",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "There's a lot of commented-out code added by this patch.  Can you remove that, or is it important that it remain?  You also add a new public append() method, but nothing calls it outside of this file.  So it probably doesn't need to be public.  But it replicates a lot of the logic from another append() method.  Can't we somehow implement this with the old append method, or define the old public append method in terms of this new private method?  Replicating logic is not good.  Finally, there are some spurious whitespace changes in your patch.",
+      "created": "2006-03-18 04:03:50+00:00",
+      "updated": "2006-03-18 04:03:50+00:00"
+    },
+    {
+      "id": "12370892",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=sameerp",
+        "name": "sameerp",
+        "key": "sameerp",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=34061",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=34061",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=34061",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=34061"
+        },
+        "displayName": "Sameer Paranjpye",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "The commented out code is spurious and should be cut. As for the multiple append methods, it's hard to implement\nthe new append methods functionality in terms of the old method, the reverse is doable with a small modification.\nThe old append method expects takes a single array which contains both the key and value. So if the new methods signature was changed to:\n\nappend(byte[] key, int keystart, int keylen, byte[] val, int valstart, int vallen) \n\nthe old one could be implemented in terms of the new private one. I dislike methods with this many parameters but don't have a better idea.",
+      "created": "2006-03-18 05:59:06+00:00",
+      "updated": "2006-03-18 05:59:06+00:00"
+    },
+    {
+      "id": "12371158",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=sameerp",
+        "name": "sameerp",
+        "key": "sameerp",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=34061",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=34061",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=34061",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=34061"
+        },
+        "displayName": "Sameer Paranjpye",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "Doug, any issues with the new patch?",
+      "created": "2006-03-21 06:55:19+00:00",
+      "updated": "2006-03-21 06:55:19+00:00"
+    },
+    {
+      "id": "12371167",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "Here's a simpler version.  This copies less and never passes large, unused buffers over JNI.  It doesn't require changes to any other APIs, nor does it assume that items are typically smaller than 64k.",
+      "created": "2006-03-21 08:29:04+00:00",
+      "updated": "2006-03-21 08:29:04+00:00"
+    },
+    {
+      "id": "12371308",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "I just committed this.  I was unable to measure a performance difference, but it is less code and uses less memory, so it seems a safe change in any case.",
+      "created": "2006-03-22 05:42:02+00:00",
+      "updated": "2006-03-22 05:42:02+00:00"
+    },
+    {
+      "id": "12371611",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=sameerp",
+        "name": "sameerp",
+        "key": "sameerp",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=34061",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=34061",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=34061",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=34061"
+        },
+        "displayName": "Sameer Paranjpye",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "It is less code and memory and is more elegant than the other fix. We were unable to measure a performance difference either, although I'm at a loss to explain why. It looks like under the hood the streaming implementation is pretty close to the old implementation. \n\nInternally, the DeflaterOutputStream passes a bytearray to the Deflater and compresses it in small chunks of 512 bytes (compressed), making a JNI call for each such chunk. So, in theory we should see poor performance for large values.\n\nLarge unused buffers don't persist however, which is nice. All in all, it appears to work great.\n\n\n",
+      "created": "2006-03-24 02:52:12+00:00",
+      "updated": "2006-03-24 02:52:12+00:00"
+    }
+  ]
+}

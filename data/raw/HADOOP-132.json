@@ -1,0 +1,264 @@
+{
+  "key": "HADOOP-132",
+  "project": "",
+  "fields": {
+    "summary": "An API for reporting performance metrics",
+    "description": "I'd like to propose adding an API for reporting performance metrics.  I will post some javadoc as soon as I figure out how to do so.  The idea is for the API to be sufficiently abstract that various different implementations can be plugged in.  In particular, there would be one that just writes the metric data to a file, and another that sends metrics to Ganglia.  It would also be possible to plug in an implementation that can support high-frequency (say, per-second) sending of fairly large amounts of data (up to hundreds of metrics) across the network.\n\nI'd be very interested in people's thoughts about what the requirements should be for such an API.\n\n- David Bowen\n",
+    "created": "2006-04-14 03:12:36+00:00",
+    "updated": "2006-08-03 17:46:35+00:00",
+    "status": {
+      "self": "https://issues.apache.org/jira/rest/api/2/status/6",
+      "description": "The issue is considered finished, the resolution is correct. Issues which are not closed can be reopened.",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/statuses/closed.png",
+      "name": "Closed",
+      "id": "6",
+      "statusCategory": {
+        "self": "https://issues.apache.org/jira/rest/api/2/statuscategory/3",
+        "id": 3,
+        "key": "done",
+        "colorName": "green",
+        "name": "Done"
+      }
+    },
+    "priority": {
+      "self": "https://issues.apache.org/jira/rest/api/2/priority/3",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/priorities/major.svg",
+      "name": "Major",
+      "id": "3"
+    },
+    "assignee": null,
+    "reporter": {
+      "self": "https://issues.apache.org/jira/rest/api/2/user?username=dbowen",
+      "name": "dbowen",
+      "key": "dbowen",
+      "avatarUrls": {
+        "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+        "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+        "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+        "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+      },
+      "displayName": "David Bowen",
+      "active": true,
+      "timeZone": "America/Los_Angeles"
+    },
+    "issue_type": {
+      "self": "https://issues.apache.org/jira/rest/api/2/issuetype/2",
+      "id": "2",
+      "description": "A new feature of the product, which has yet to be developed.",
+      "iconUrl": "https://issues.apache.org/jira/secure/viewavatar?size=xsmall&avatarId=21141&avatarType=issuetype",
+      "name": "New Feature",
+      "subtask": false,
+      "avatarId": 21141
+    },
+    "resolution": {
+      "self": "https://issues.apache.org/jira/rest/api/2/resolution/1",
+      "id": "1",
+      "description": "A fix for this issue is checked into the tree and tested.",
+      "name": "Fixed"
+    },
+    "resolutiondate": "2006-04-25 09:25:36+00:00",
+    "comments": null
+  },
+  "comments": [
+    {
+      "id": "12374409",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=dbowen",
+        "name": "dbowen",
+        "key": "dbowen",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "David Bowen",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "Here is the proposed javadoc.  Comments on the API are welcome also.\n",
+      "created": "2006-04-14 03:14:45+00:00",
+      "updated": "2006-04-14 03:14:45+00:00"
+    },
+    {
+      "id": "12374426",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=stack",
+        "name": "stack",
+        "key": "stack",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Michael Stack",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "Looks good.  Would be sweet having job progress show in Ganglia.  Metrics would run on every slave?\n\nI'd suggest that MetricsRecord and guages need descriptions (Adding to Record would be easy enough -- harder to guage going by your API so far).  Would come in handy in an admin page listing available records and their guages.  if they had descriptions, then Record could be roughly mapped to jmx MBean and gauge to jmx Attribute.",
+      "created": "2006-04-14 05:19:23+00:00",
+      "updated": "2006-04-14 05:19:23+00:00"
+    },
+    {
+      "id": "12374432",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "A nit: the code should be in package org.apache.hadoop.metrics, not org.hadoop.metrics.",
+      "created": "2006-04-14 06:05:38+00:00",
+      "updated": "2006-04-14 06:05:38+00:00"
+    },
+    {
+      "id": "12375418",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=dbowen",
+        "name": "dbowen",
+        "key": "dbowen",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "David Bowen",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "Here is an updated API, incorporating the feedback I've received so far.  The main\nchanges are \n\n   (1) Ganglia support is included - this doesn't really affect the API, but the javadoc describes the configuration options which might be of interest.\n\n   (2) The SPI (service provider interface) is now in a separate package, and it does most of the implementation work so that implementation packages (like the file and ganglia sub-packages) can be quite small.\n\n  (3) The unbuffered option has been removed.  This means that developers can use the API freely in inner-loops without the concern that metric reporting might be configured to emit data on every update.  The data will just be stored in an internal table, and the table will only be sent periodically to the metrics server.\n\n",
+      "created": "2006-04-21 02:08:16+00:00",
+      "updated": "2006-04-21 02:08:16+00:00"
+    },
+    {
+      "id": "12375438",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "+1 Looks good to me!\n\nI think there's a typo in the overview, where you should have setMetric() you instead have setGauge().\n\n",
+      "created": "2006-04-21 04:51:56+00:00",
+      "updated": "2006-04-21 04:51:56+00:00"
+    },
+    {
+      "id": "12375653",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=dbowen",
+        "name": "dbowen",
+        "key": "dbowen",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "David Bowen",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "\nOK, here is the source code, in the form of a patch.\n\nNOTE: this requires javac.version 1.5.  I.e. you currently have to say \"ant -Djavac.version=1.5\".  Is this acceptable in general for Hadoop development? \nThe 1.5 (or 5.0 as they call it) for-loop syntax is very convenient.\n\nA couple of changes since yesterday's javadoc: \n\n(1) there is now a NullContext which is used by default and does nothing; formerly the FileContext was used by default and it wrote to stdout if a file was not specified.\n\n(2) there is now an Updater interface for the callbacks, instead of using Runnable.  This is so that the MetricsContext can be passed as an argument to the callback.\n\n",
+      "created": "2006-04-22 06:39:03+00:00",
+      "updated": "2006-04-22 06:39:03+00:00"
+    },
+    {
+      "id": "12376069",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "We should still stick with JDK 1.4.  Most developers are now using JDK 1.5, but many folks still use JDK 1.4 in production.  So, if it's not too much pain, please back-port this to 1.4.  Thanks!",
+      "created": "2006-04-25 01:04:15+00:00",
+      "updated": "2006-04-25 01:04:15+00:00"
+    },
+    {
+      "id": "12376145",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=dbowen",
+        "name": "dbowen",
+        "key": "dbowen",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "David Bowen",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "OK, here is an updated version of the patch with the code made uglier and less robust so as to accommodate people who perversely insist on running with JDK 1.4.  Also, I added a note to CHANGES.txt.\n",
+      "created": "2006-04-25 08:36:57+00:00",
+      "updated": "2006-04-25 08:36:57+00:00"
+    },
+    {
+      "id": "12376148",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=dbowen",
+        "name": "dbowen",
+        "key": "dbowen",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "David Bowen",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "Woops, forgot to update CHANGES.txt before modifying it. ",
+      "created": "2006-04-25 08:40:47+00:00",
+      "updated": "2006-04-25 08:40:47+00:00"
+    },
+    {
+      "id": "12376149",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "I just committed this.  Thanks, David!",
+      "created": "2006-04-25 09:25:36+00:00",
+      "updated": "2006-04-25 09:25:36+00:00"
+    }
+  ]
+}

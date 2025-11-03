@@ -1,0 +1,84 @@
+{
+  "key": "HADOOP-36",
+  "project": "HADOOP",
+  "fields": {
+    "summary": "Adding some uniformity/convenience to environment management",
+    "description": "Currently, \"slaves\" are loaded from ~/.slaves. What would be better would be to default from something like conf/hadoop-slaves\n\nPerhaps split slaves, having a different set for \"datanodes\" vs. \"tasktracker\" nodes. ie, conf/hadoop-slaves-tasktracker, conf/hadoop-slaves-datanodes, or some similar split. There's the possibility it's worth building in the assumption that tasktracker is a superset, and thus implicitly includes datanodes, but this might be a bad assumption.\n\nAlso, make sure all scripts source something like conf/hadoop-env.sh. Thus, the user can edit hadoop-env.sh to specify JAVA_HOME, or an alternate HADOOP_SLAVES location. It would also be desirable to have a seed CLASSPATH here. Possibly name it HADOOP_CLASSPATH, to make it explicit and not make hadoop scripts possibly interact with an otherwise-set system CLASSPATH variable.\n\nThese changes would probably be useful to the nutch project, too.",
+    "created": "2006-02-14 05:03:38+00:00",
+    "updated": "2006-08-03 17:46:27+00:00",
+    "status": {
+      "self": "https://issues.apache.org/jira/rest/api/2/status/6",
+      "description": "The issue is considered finished, the resolution is correct. Issues which are not closed can be reopened.",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/statuses/closed.png",
+      "name": "Closed",
+      "id": "6",
+      "statusCategory": {
+        "self": "https://issues.apache.org/jira/rest/api/2/statuscategory/3",
+        "id": 3,
+        "key": "done",
+        "colorName": "green",
+        "name": "Done"
+      }
+    },
+    "priority": {
+      "self": "https://issues.apache.org/jira/rest/api/2/priority/3",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/priorities/major.svg",
+      "name": "Major",
+      "id": "3"
+    },
+    "assignee": null,
+    "reporter": {
+      "self": "https://issues.apache.org/jira/rest/api/2/user?username=bpendleton",
+      "name": "bpendleton",
+      "key": "bpendleton",
+      "avatarUrls": {
+        "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+        "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+        "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+        "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+      },
+      "displayName": "Bryan Pendleton",
+      "active": true,
+      "timeZone": "Etc/UTC"
+    },
+    "issue_type": {
+      "self": "https://issues.apache.org/jira/rest/api/2/issuetype/4",
+      "id": "4",
+      "description": "An improvement or enhancement to an existing feature or task.",
+      "iconUrl": "https://issues.apache.org/jira/secure/viewavatar?size=xsmall&avatarId=21140&avatarType=issuetype",
+      "name": "Improvement",
+      "subtask": false,
+      "avatarId": 21140
+    },
+    "resolution": {
+      "self": "https://issues.apache.org/jira/rest/api/2/resolution/1",
+      "id": "1",
+      "description": "A fix for this issue is checked into the tree and tested.",
+      "name": "Fixed"
+    },
+    "resolutiondate": "2006-02-16 07:03:53+00:00",
+    "comments": null
+  },
+  "comments": [
+    {
+      "id": "12366548",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "I just committed fixes for most of this.  The slaves and environment variables are now read from the conf directory.  If there are further elements you'd like to see, please submit them as separate bugs.",
+      "created": "2006-02-16 07:03:53+00:00",
+      "updated": "2006-02-16 07:03:53+00:00"
+    }
+  ]
+}

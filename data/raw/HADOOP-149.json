@@ -1,0 +1,104 @@
+{
+  "key": "HADOOP-149",
+  "project": "",
+  "fields": {
+    "summary": "TaskTracker#unJar trashes file modes",
+    "description": "Last Changed Rev: 395069\n\nThe unJar'ing of the job 'jar', trashes any file modes I've lovingly set at zip time.  This is a bit of a pain when my job wants to run external scripts and I want to bundle the scripts up in the jar itself for distribution out to slaves.\n\nI ain't sure how to address the issue though. Nought about unix file modes in JarEntry nor ZipEntry.  I tried the ant 1.6.5 task unjar and unzip tasks thinking they'd respect file modes but they do same as TaskTracker#unJar (Commons zip makes mention of unix file modes but I haven't tried it).  Perhaps support for jobs as tar(.gz) bundles?  (But again, couldn't use ant to untar. It does same as unzip/unjar trashing file permissions).",
+    "created": "2006-04-20 00:59:20+00:00",
+    "updated": "2006-08-03 17:46:36+00:00",
+    "status": {
+      "self": "https://issues.apache.org/jira/rest/api/2/status/6",
+      "description": "The issue is considered finished, the resolution is correct. Issues which are not closed can be reopened.",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/statuses/closed.png",
+      "name": "Closed",
+      "id": "6",
+      "statusCategory": {
+        "self": "https://issues.apache.org/jira/rest/api/2/statuscategory/3",
+        "id": 3,
+        "key": "done",
+        "colorName": "green",
+        "name": "Done"
+      }
+    },
+    "priority": {
+      "self": "https://issues.apache.org/jira/rest/api/2/priority/4",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/priorities/minor.svg",
+      "name": "Minor",
+      "id": "4"
+    },
+    "assignee": null,
+    "reporter": {
+      "self": "https://issues.apache.org/jira/rest/api/2/user?username=stack",
+      "name": "stack",
+      "key": "stack",
+      "avatarUrls": {
+        "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+        "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+        "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+        "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+      },
+      "displayName": "Michael Stack",
+      "active": true,
+      "timeZone": "America/Los_Angeles"
+    },
+    "issue_type": {
+      "self": "https://issues.apache.org/jira/rest/api/2/issuetype/1",
+      "id": "1",
+      "description": "A problem which impairs or prevents the functions of the product.",
+      "iconUrl": "https://issues.apache.org/jira/secure/viewavatar?size=xsmall&avatarId=21133&avatarType=issuetype",
+      "name": "Bug",
+      "subtask": false,
+      "avatarId": 21133
+    },
+    "resolution": {
+      "self": "https://issues.apache.org/jira/rest/api/2/resolution/2",
+      "id": "2",
+      "description": "The problem described is an issue which will never be fixed.",
+      "name": "Won't Fix"
+    },
+    "resolutiondate": "2006-04-20 02:32:10+00:00",
+    "comments": null
+  },
+  "comments": [
+    {
+      "id": "12375173",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "Yes, this is a pain.  I think the root of the problem is that file modes are not cross-platform, so Java doesn't have an API to access them.\n\nAs a work-around, can you, instead of directly invoking your scripts, invoke '/bin/bash myScript.sh'?  That way you don't require things to be executable.",
+      "created": "2006-04-20 01:12:23+00:00",
+      "updated": "2006-04-20 01:12:23+00:00"
+    },
+    {
+      "id": "12375187",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=stack",
+        "name": "stack",
+        "key": "stack",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Michael Stack",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "That'll do.  Thanks.\n\nI'd suggest that you can close this issue.  The suggested workaround -- a /bin/bash or /usr/bin/env prefix -- will likely work for most.",
+      "created": "2006-04-20 02:10:52+00:00",
+      "updated": "2006-04-20 02:10:52+00:00"
+    }
+  ]
+}

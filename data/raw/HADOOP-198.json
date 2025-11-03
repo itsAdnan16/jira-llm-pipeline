@@ -1,0 +1,117 @@
+{
+  "key": "HADOOP-198",
+  "project": "",
+  "fields": {
+    "summary": "adding owen's examples to exampledriver",
+    "description": "owen's sorter and randomwriter are not added to the examples.jar file",
+    "created": "2006-05-05 07:33:24+00:00",
+    "updated": "2006-08-03 17:46:40+00:00",
+    "status": {
+      "self": "https://issues.apache.org/jira/rest/api/2/status/6",
+      "description": "The issue is considered finished, the resolution is correct. Issues which are not closed can be reopened.",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/statuses/closed.png",
+      "name": "Closed",
+      "id": "6",
+      "statusCategory": {
+        "self": "https://issues.apache.org/jira/rest/api/2/statuscategory/3",
+        "id": 3,
+        "key": "done",
+        "colorName": "green",
+        "name": "Done"
+      }
+    },
+    "priority": {
+      "self": "https://issues.apache.org/jira/rest/api/2/priority/4",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/priorities/minor.svg",
+      "name": "Minor",
+      "id": "4"
+    },
+    "assignee": {
+      "self": "https://issues.apache.org/jira/rest/api/2/user?username=mahadev",
+      "name": "mahadev",
+      "key": "mahadev",
+      "avatarUrls": {
+        "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+        "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+        "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+        "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+      },
+      "displayName": "Mahadev Konar",
+      "active": true,
+      "timeZone": "Etc/UTC"
+    },
+    "reporter": {
+      "self": "https://issues.apache.org/jira/rest/api/2/user?username=mahadev",
+      "name": "mahadev",
+      "key": "mahadev",
+      "avatarUrls": {
+        "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+        "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+        "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+        "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+      },
+      "displayName": "Mahadev Konar",
+      "active": true,
+      "timeZone": "Etc/UTC"
+    },
+    "issue_type": {
+      "self": "https://issues.apache.org/jira/rest/api/2/issuetype/4",
+      "id": "4",
+      "description": "An improvement or enhancement to an existing feature or task.",
+      "iconUrl": "https://issues.apache.org/jira/secure/viewavatar?size=xsmall&avatarId=21140&avatarType=issuetype",
+      "name": "Improvement",
+      "subtask": false,
+      "avatarId": 21140
+    },
+    "resolution": {
+      "self": "https://issues.apache.org/jira/rest/api/2/resolution/1",
+      "id": "1",
+      "description": "A fix for this issue is checked into the tree and tested.",
+      "name": "Fixed"
+    },
+    "resolutiondate": "2006-05-05 23:29:51+00:00",
+    "comments": null
+  },
+  "comments": [
+    {
+      "id": "12377926",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=mahadev",
+        "name": "mahadev",
+        "key": "mahadev",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Mahadev Konar",
+        "active": true,
+        "timeZone": "Etc/UTC"
+      },
+      "body": "Added owen's examples to exampledriver. Also, made the ClusterStatus contructors public since the WritableFactories throw an exception if non public fields are accessed out of the package.",
+      "created": "2006-05-05 07:37:05+00:00",
+      "updated": "2006-05-05 07:37:05+00:00"
+    },
+    {
+      "id": "12378073",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "I just committed this.  I changed your fix to the WritableFactory problem slightly, as I'd rather avoid making more things public to work around this.  Please confirm that things work for you the way I fixed it.  Thanks!",
+      "created": "2006-05-05 23:29:51+00:00",
+      "updated": "2006-05-05 23:29:51+00:00"
+    }
+  ]
+}

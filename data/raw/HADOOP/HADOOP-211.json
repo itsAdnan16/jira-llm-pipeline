@@ -1,0 +1,737 @@
+{
+  "key": "HADOOP-211",
+  "project": "HADOOP",
+  "fields": {
+    "summary": "logging improvements for Hadoop",
+    "description": "Here's a proposal for some impovements to the way Hadoop does logging. It advocates 3 \nbroad changes to the way logging is currently done, these being:\n\n- The use of a uniform logging format by all Hadoop subsystems\n- The use of Apache commons logging as a facade above an underlying logging framework\n- The use of Log4J as the underlying logging framework instead of java.util.logging\n\nThis is largely polishing work, but it seems like it would make log analysis and debugging\neasier in the short term. In the long term, it would future proof logging to the extent of\nallowing the logging framework used to change while requiring minimal code change. The \npropos changes are motivated by the following requirements which we think Hadoops \nlogging should meet:\n\n- Hadoops logs should be amenable to analysis by tools like grep, sed, awk etc.\n- Log entries should be clearly annotated with a timestamp and a logging level\n- Log entries should be traceable to the subsystem from which they originated\n- The logging implementation should allow log entries to be annotated with source code \nlocation information like classname, methodname, file and line number, without requiring\ncode changes\n- It should be possible to change the logging implementation used without having to change\nthousands of lines of code\n- The mapping of loggers to destinations (files, directories, servers etc.) should be \nspecified and modifiable via configuration\n\n\nUniform logging format:\n\nAll Hadoop logs should have the following structure.\n\n<Header>\\n\n<LogEntry>\\n [<Exception>\\n]\n.\n.\n.\n\nwhere the header line specifies the format of each log entry. The header line has the format:\n'# <Fieldname> <Fieldname>...\\n'. \n\nThe default format of each log entry is: '# Timestamp Level LoggerName Message', where:\n\n- Timestamp is a date and time in the format MM/DD/YYYY:HH:MM:SS\n- Level is the logging level (FATAL, WARN, DEBUG, TRACE, etc.)\n- LoggerName is the short name of the logging subsystem from which the message originated e.g.\nfs.FSNamesystem, dfs.Datanode etc.\n- Message is the log message produced\n\n\nWhy Apache commons logging and Log4J?\n\nApache commons logging is a facade meant to be used as a wrapper around an underlying logging\nimplementation. Bridges from Apache commons logging to popular logging implementations \n(Java logging, Log4J, Avalon etc.) are implemented and available as part of the commons logging\ndistribution. Implementing a bridge to an unsupported implementation is fairly striaghtforward\nand involves the implementation of subclasses of the commons logging LogFactory and Logger \nclasses. Using Apache commons logging and making all logging calls through it enables us to\nmove to a different logging implementation by simply changing configuration in the best case.\nEven otherwise, it incurs minimal code churn overhead.\n\nLog4J offers a few benefits over java.util.logging that make it a more desirable choice for the\nlogging back end.\n\n- Configuration Flexibility: The mapping of loggers to destinations (files, sockets etc.)\ncan be completely specified in configuration. It is possible to do this with Java logging as\nwell, however, configuration is a lot more restrictive. For instance, with Java logging all \nlog files must have names derived from the same pattern. For the namenode, log files could \nbe named with the pattern \"%h/namenode%u.log\" which would put log files in the user.home\ndirectory with names like namenode0.log etc. With Log4J it would be possible to configure\nthe namenode to emit log files with different names, say heartbeats.log, namespace.log,\nclients.log etc. Configuration variables in Log4J can also have the values of system \nproperties embedded in them.\n\n- Takes wrappers into account: Log4J takes into account the possibility that an application\nmay be invoking it via a wrapper, such as Apache commons logging. This is important because\nlogging event objects must be able to infer the context of the logging call such as classname,\nmethodname etc. Inferring context is a relatively expensive operation that involves creating\nan exception and examining the stack trace to find the frame just before the first frame \nof the logging framework. It is therefore done lazily only when this information actually \nneeds to be logged. Log4J can be instructed to look for the frame corresponding to the wrapper\nclass, Java logging cannot. In the case of Java logging this means that a) the bridge from \nApache commons logging is responsible for inferring the calling context and setting it in the \nlogging event and b) this inference has to be done on every logging call regardless of whether\nor not it is needed.\n\n- More handy features: Log4J has some handy features that Java logging doesn't. A couple\nof examples of these:\na) Date based rolling of log files \nb) Format control through configuration. Log4J has a PatternLayout class that can be \nconfigured to generate logs with a user specified pattern. The logging format described\nabove can be described as \"%d{MM/dd/yyyy:HH:mm:SS} %c{2} %p %m\". The format specifiers\nindicate that each log line should have the date and time followed by the logger name followed\nby the logging level or priority followed by the application generated message.\n",
+    "created": "2006-05-12 06:16:09+00:00",
+    "updated": "2006-08-03 17:46:41+00:00",
+    "status": {
+      "self": "https://issues.apache.org/jira/rest/api/2/status/6",
+      "description": "The issue is considered finished, the resolution is correct. Issues which are not closed can be reopened.",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/statuses/closed.png",
+      "name": "Closed",
+      "id": "6",
+      "statusCategory": {
+        "self": "https://issues.apache.org/jira/rest/api/2/statuscategory/3",
+        "id": 3,
+        "key": "done",
+        "colorName": "green",
+        "name": "Done"
+      }
+    },
+    "priority": {
+      "self": "https://issues.apache.org/jira/rest/api/2/priority/4",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/priorities/minor.svg",
+      "name": "Minor",
+      "id": "4"
+    },
+    "assignee": {
+      "self": "https://issues.apache.org/jira/rest/api/2/user?username=sameerp",
+      "name": "sameerp",
+      "key": "sameerp",
+      "avatarUrls": {
+        "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=34061",
+        "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=34061",
+        "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=34061",
+        "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=34061"
+      },
+      "displayName": "Sameer Paranjpye",
+      "active": true,
+      "timeZone": "America/Los_Angeles"
+    },
+    "reporter": {
+      "self": "https://issues.apache.org/jira/rest/api/2/user?username=sameerp",
+      "name": "sameerp",
+      "key": "sameerp",
+      "avatarUrls": {
+        "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=34061",
+        "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=34061",
+        "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=34061",
+        "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=34061"
+      },
+      "displayName": "Sameer Paranjpye",
+      "active": true,
+      "timeZone": "America/Los_Angeles"
+    },
+    "issue_type": {
+      "self": "https://issues.apache.org/jira/rest/api/2/issuetype/4",
+      "id": "4",
+      "description": "An improvement or enhancement to an existing feature or task.",
+      "iconUrl": "https://issues.apache.org/jira/secure/viewavatar?size=xsmall&avatarId=21140&avatarType=issuetype",
+      "name": "Improvement",
+      "subtask": false,
+      "avatarId": 21140
+    },
+    "resolution": {
+      "self": "https://issues.apache.org/jira/rest/api/2/resolution/1",
+      "id": "1",
+      "description": "A fix for this issue is checked into the tree and tested.",
+      "name": "Fixed"
+    },
+    "resolutiondate": "2006-06-03 02:20:13+00:00",
+    "comments": null
+  },
+  "comments": [
+    {
+      "id": "12379176",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=eric14",
+        "name": "eric14",
+        "key": "eric14",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Eric Baldeschwieler",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "I suggest we use iso8601 time format.\n\nhttp://www.cl.cam.ac.uk/~mgk25/iso-time.html\n\nThis would suggest yyyy-MM-ddTHH:mm:SS , such as 2006-05-11T23:47:03\n\nThe T is a literal and no one ever likes it.  Change it for all I care, but standards are ok.  This also suggests UTC, which I think is a good default, but also allows for local time, with a distinct notation 2006-05-11T23:47:03-08.  We could support that as a config option if folks care.\n\nThis format is also directly sortable, which is nice and avoids localization issues (MM-dd or dd-MM).\n\n",
+      "created": "2006-05-12 13:54:27+00:00",
+      "updated": "2006-05-12 13:54:27+00:00"
+    },
+    {
+      "id": "12383220",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "I'm +1 for switching to commons-logging and to log4j by default.  But I think we shouldn't mandate a format.  It should be possible to embed Hadoop in other systems with other logging standards, and get it to comply with those standards.  So most of what you suggest about log formats I think should be couched in the terms \"by default\", right?\n",
+      "created": "2006-05-13 00:16:42+00:00",
+      "updated": "2006-05-13 00:16:42+00:00"
+    },
+    {
+      "id": "12383224",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=omalley",
+        "name": "omalley",
+        "key": "owen.omalley",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?ownerId=owen.omalley&avatarId=54139",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=owen.omalley&avatarId=54139",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=owen.omalley&avatarId=54139",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=owen.omalley&avatarId=54139"
+        },
+        "displayName": "Owen O'Malley",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "I'm +1 for using a time format that is sortable. I've been using the sed, awk, grep tools for merging logs files to see trends across time.\n\ncommons-logging and log4j sound good.",
+      "created": "2006-05-13 00:40:43+00:00",
+      "updated": "2006-05-13 00:40:43+00:00"
+    },
+    {
+      "id": "12383227",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=sameerp",
+        "name": "sameerp",
+        "key": "sameerp",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=34061",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=34061",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=34061",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=34061"
+        },
+        "displayName": "Sameer Paranjpye",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "Yes, the suggestions about formats are meant to be defaults. This is one more reason for using Log4J, it gives you a fair amount of freedom with specifying formats in configuration. ",
+      "created": "2006-05-13 00:49:47+00:00",
+      "updated": "2006-05-13 00:49:47+00:00"
+    },
+    {
+      "id": "12383238",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "Even log4j should be a default.  Hadoop code should only reference the commons-logging api, right?  BTW, Sun's logging API also gives you complete freedom in formatting, although you have to write some Java classes, not just configure it with formatting strings as you can with log4j.",
+      "created": "2006-05-13 01:18:53+00:00",
+      "updated": "2006-05-13 01:18:53+00:00"
+    },
+    {
+      "id": "12383241",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=sameerp",
+        "name": "sameerp",
+        "key": "sameerp",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=34061",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=34061",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=34061",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=34061"
+        },
+        "displayName": "Sameer Paranjpye",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "Wasn't really thinking in terms of making the logging implementation configurable, but there's no reason that can't be done. Hadoop code won't be invoking any part of log4j or whatever else directly.\n\nSun's logging does give you complete freedom in formatting, I was pointing out that it's not as flexible as log4j where a lot can be achieved in configuration.\n\nWe can have the logging implementation used be specified in configuration. Do you see a lot of people making use of that feature though? My instinct is that they won't...",
+      "created": "2006-05-13 01:31:57+00:00",
+      "updated": "2006-05-13 01:31:57+00:00"
+    },
+    {
+      "id": "12383356",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=eric14",
+        "name": "eric14",
+        "key": "eric14",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Eric Baldeschwieler",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "What real advantage do we get  from all of this flexibility?\n\nOne of our goals for attacking the logging system is to allow us to easily process the logs with the system.  To do that will require building readers that can deal with the log format and organization.  I'd hate to loose that in the interest of complete generality.\n\nJust curious what use case we are after with complete reformability and abstract logging.\n\n",
+      "created": "2006-05-13 12:02:10+00:00",
+      "updated": "2006-05-13 12:02:10+00:00"
+    },
+    {
+      "id": "12412212",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=omalley",
+        "name": "omalley",
+        "key": "owen.omalley",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?ownerId=owen.omalley&avatarId=54139",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=owen.omalley&avatarId=54139",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=owen.omalley&avatarId=54139",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=owen.omalley&avatarId=54139"
+        },
+        "displayName": "Owen O'Malley",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "A lot of exceptions are currently being logged at the *info* level and most of them should probably be at the *warn* level. Especially, once we log the level it would be good to find the exceptions by grepping for WARN.",
+      "created": "2006-05-17 23:55:00+00:00",
+      "updated": "2006-05-17 23:55:00+00:00"
+    },
+    {
+      "id": "12412213",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "The semantics I use for levels is something like:\n\nSEVERE: if this is a production system, someone should be paged, red lights should flash, etc.  Something is definitely wrong and the system is not operating correctly.  Intervention is required.  This should be used sparingly.\n\nWARN: in a production system, warnings should be propagated & summarized on a central console.  If lots are generated then something may be wrong.\n\nINFO, FINE, FINER, etc. are used for debugging.  INFO is the level normally logged in production, FINE, FINER, etc. are typically only used when developing.\n\nIs that consistent with the way others use these?\n",
+      "created": "2006-05-18 00:05:44+00:00",
+      "updated": "2006-05-18 00:05:44+00:00"
+    },
+    {
+      "id": "12412220",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=milindb",
+        "name": "milindb",
+        "key": "milindb",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Milind Barve",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "At least one place where level should be info and not warn is when we create a file on dfs. It tries to do mkdirs whether directory exists or not. If it already exists, it warns that there is an error creating the directory. I think the warning should be when the directory could not be created because of other factors (such as permissions), otherwise it should be info or even fine.",
+      "created": "2006-05-18 00:37:49+00:00",
+      "updated": "2006-05-18 00:37:49+00:00"
+    },
+    {
+      "id": "12412263",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=barry",
+        "name": "barry",
+        "key": "barry",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Barry Kaplan",
+        "active": true,
+        "timeZone": "Etc/UTC"
+      },
+      "body": "At the very least switching to commons logging will make it easier when configuring hadoop within other applications. Currently this is one of the few libraries I use that I can't configure to use my standard log4j settings.",
+      "created": "2006-05-18 06:48:34+00:00",
+      "updated": "2006-05-18 06:48:34+00:00"
+    },
+    {
+      "id": "12412284",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=eric14",
+        "name": "eric14",
+        "key": "eric14",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Eric Baldeschwieler",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "True, user errors that cause no harm don't deserve warnings in a central log.  The trick is to propogate the issue back to the user...",
+      "created": "2006-05-18 09:58:12+00:00",
+      "updated": "2006-05-18 09:58:12+00:00"
+    },
+    {
+      "id": "12412615",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=barry",
+        "name": "barry",
+        "key": "barry",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Barry Kaplan",
+        "active": true,
+        "timeZone": "Etc/UTC"
+      },
+      "body": "I needed to get this working with log4j so I quickly ripped out the java.util.logging and replaced it with apache commons. The part I am unsure of is how much configuration of logging do you wish to do from hadoop itself. My opinion is let people configure the log4j the way they want it and hadoop should only choose whatever is available, and log to console if nothing is there (essentially what apache-commons does).",
+      "created": "2006-05-20 07:05:54+00:00",
+      "updated": "2006-05-20 07:05:54+00:00"
+    },
+    {
+      "id": "12413170",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=sanjay.dahiya",
+        "name": "sanjay.dahiya",
+        "key": "sanjay.dahiya",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Sanjay Dahiya",
+        "active": true,
+        "timeZone": "Etc/UTC"
+      },
+      "body": "On default Log4J configuration format - \n\nSome points - \n1. Logging caller class information like - originating method/line no, File name are known to be expensive operations. Also they may not be supported by All JVMs. Do we want these in default config ? \n2. For namenode I added an option %X{client}, this enables logging client identification along with msg but needs the code to supply that information using MDC.put(\"client\", clientName)\n3. We could do a seperate logger per client but thats a bad idea as there will be too many loggers. \n4. We can have logger hierarchy based on packages/classes and/or some logical hierarchy like - namenode.block.allocation, namenode.block.removal etc. Any comments on what type of log hierarchy you would like to see for the modules you worked on ? \n5. We can use MDC for categorizing logs on some criterion other than clients - like blocks, file system. Anythng you would like to see here ? \n\nA log4J format to start with - default is a RollingFile ( based on size, can make it based on time also ). Pls let me know your requirements if any and I will keep updating this file, once this done migrate codebase to log4j. \n-------------------------------------------------\n# remove DEBUG if not needed. \nlog4j.rootLogger=DEBUG, RFA\nlog4j.threshhold=ALL\n\n# Rolling File appender configuration\nlog4j.appender.RFA=org.apache.log4j.RollingFileAppender\nlog4j.appender.RFA.File=${HANDDOP_HOME}/hadoop.log\n\n# change file size \nlog4j.appender.RFA.MaxFileSize=1MB\nlog4j.appender.RFA.MaxBackupIndex=10\n\nlog4j.appender.RFA.layout=org.apache.log4j.PatternLayout\nlog4j.appender.RFA.layout.ConversionPattern=%d{ISO8601} %-5p %c{2} (%F:%M(%L)) - %m%n\n\n# logically seperated logger configurations\nlog4j.logger.namenode=RFA\nlog4j.appender.RFA.layout=org.apache.log4j.PatternLayout\nlog4j.appender.RFA.layout.ConversionPattern=%d{ISO8601} %-5p %X{client} %c{2} (%F:%M(%L)) - %m%n\n\n",
+      "created": "2006-05-25 02:29:26+00:00",
+      "updated": "2006-05-25 02:29:26+00:00"
+    },
+    {
+      "id": "12414039",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=acmurthy",
+        "name": "acmurthy",
+        "key": "acmurthy",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Arun Murthy",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "Here's attached the patch for switching to commons logging with log4j as the logging framework.\n\nNotes:\n\na) Hopefully this can be incorporated asap into hadoop svn since any further commits will entail us to patch anew.\n\nb) The conf/log4j.properties file uses DailyRollingFileAppender which rolls over at midnight. Another choice is to use RollingFileAppender which will rollover every 1MB and maintain 30 backups, which is currently commented out.\n\nc) There are some parts of code for e.g. those configuring the log-file, loog-levels etc. in the code which we have had to comment out since they aren't supported by Commons Logging. They should now be configured via the .properties file.\n\nd) The framework as in the patch creates 4 separate logfiles i.e. \n  > $HADOOP_HOME/logs/namenode.log\n  > $HADOOP_HOME/logs/datanode.log\n  > $HADOOP_HOME/logs/jobtracker.log\n  > $HADOOP_HOME/logs/tasktracker.log\n\n   This is done by passing -Dhadoop.log.file=<logfilename>.log via the bin/hadoop startup script and referenced in log4j.properties.\n\nthanks,\nArun\n\nPS: This will have to be committed *before* the libhdfs patch, and after that I will go ahead and create a 2 line patch for TestDFSCIO.java (switch java.util.logging to commons logging).",
+      "created": "2006-05-31 19:21:05+00:00",
+      "updated": "2006-05-31 19:21:05+00:00"
+    },
+    {
+      "id": "12414147",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "Unfortunately this patch no longer applies cleanly.  Can you please update your source tree and re-generate this patch?  I try to process patches in the order they are submitted, but frequently there are conflicts in the queue.  Thanks!",
+      "created": "2006-06-01 04:01:01+00:00",
+      "updated": "2006-06-01 04:01:01+00:00"
+    },
+    {
+      "id": "12414150",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "Also, we should not yet remove LogFormatter, but only deprecate it, as user code (e.g., Nutch) may use this class.  A good test for back-compatibility of changes to Hadoop's public APIs is to check that Nutch still compiles and runs correctly with an updated Hadoop jar.\n\nIf we deprecate LogFormatter in 0.3 then we can remove it in Hadoop 0.4, but we should always give folks at least one release to remove dependencies on deprecated features.\n\nThanks again!",
+      "created": "2006-06-01 04:06:11+00:00",
+      "updated": "2006-06-01 04:06:11+00:00"
+    },
+    {
+      "id": "12414155",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "One more thing: please don't just comment out obsolete code; delete it.  Thanks.\n\nhttp://wiki.apache.org/lucene-hadoop/HowToContribute",
+      "created": "2006-06-01 04:13:01+00:00",
+      "updated": "2006-06-01 04:13:01+00:00"
+    },
+    {
+      "id": "12414208",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=acmurthy",
+        "name": "acmurthy",
+        "key": "acmurthy",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Arun Murthy",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "Doug, \n\n Please find the patch for commons-logging/log4j against the latest snapshot. \n\n I have incorporated all your comments i.e. kept LogFormatter.java, removed dead-wood etc.\n\n Please try and apply this patch on a priority basis since it touches quite a bit of the code-base and potentially any commit will necessiate another patch! :)\n\nthanks,\nArun\n\nPS: We have removed hadoop/conf from the build-time classpath in build.xml since we don't want hadoop's log4j.properties to be picked up by the build-tools. We feel hadoop/conf isn't necessary for building at all. Please correct us if we are wrong.\n",
+      "created": "2006-06-01 16:51:25+00:00",
+      "updated": "2006-06-01 16:51:25+00:00"
+    },
+    {
+      "id": "12414220",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=acmurthy",
+        "name": "acmurthy",
+        "key": "acmurthy",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Arun Murthy",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "Minor point: we will need commons-logging-1.0.4.jar and log4j-1.*.*.jar in lib/\n\nthanks,\nArun",
+      "created": "2006-06-01 18:25:30+00:00",
+      "updated": "2006-06-01 18:25:30+00:00"
+    },
+    {
+      "id": "12414310",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "I can apply this by reverting to revision 410692, then use 'svn up' to merge in subsequent changes.  But I'm still having trouble building and running unit tests (at least on Windows, which I'm using today, since I'm on the road).  The change to build.xml causes hadoop-default.xml not to be found.  When I fix that, Jasper fails to be able to compile the jsp pages, since it uses log4j.  'ant clean test' reports:\n\nBuildfile: build.xml\n  [taskdef] log4j:ERROR setFile(null,true) call failed.\n  [taskdef] java.io.FileNotFoundException: \\ (The system cannot find the path s\necified)\n  [taskdef]     at java.io.FileOutputStream.openAppend(Native Method)\n  [taskdef]     at java.io.FileOutputStream.<init>(FileOutputStream.java:177)\n  [taskdef]     at java.io.FileOutputStream.<init>(FileOutputStream.java:102)\n  [taskdef]     at org.apache.log4j.FileAppender.setFile(FileAppender.java:289)\n\nSo I'm (sadly) not quite able to commit this yet.",
+      "created": "2006-06-02 05:05:14+00:00",
+      "updated": "2006-06-02 05:05:14+00:00"
+    },
+    {
+      "id": "12414487",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "Okay, I've worked out the configuration problems.  Now it appears that some things that were previously logged at level=FINE are now logged at INFO, when they should be DEBUG.  I'm working on fixing that...",
+      "created": "2006-06-03 00:48:19+00:00",
+      "updated": "2006-06-03 00:48:19+00:00"
+    },
+    {
+      "id": "12414503",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "With some trepidation, I just committed this.\n\nThere were a number of problems with this patch.  It changed all level=fine log messages into level=info, rather than level=debug.  The build needed to be repaired as well, since logging is performed there, but the standard configuration is not appropriate during build, so I added a build/test log4j configuration.  Finally, the changes to bin/hadoop did not name the log files correctly: the correct log file name should be normally set in bin/hadoop-daemon.sh and used in bin/hadoop.  I fixed all of these.\n\nIn the future, we should not try to make such large changes in the last days before a release.  Such changes should be made early in the release cycle.  I suspect we will still encounter more problems with this as I now try to make a release and test things with Nutch for back-compatibility, on Windows, etc.\n",
+      "created": "2006-06-03 02:20:13+00:00",
+      "updated": "2006-06-03 02:20:13+00:00"
+    },
+    {
+      "id": "12414555",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=acmurthy",
+        "name": "acmurthy",
+        "key": "acmurthy",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Arun Murthy",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "Apologise for all the troubles... we assumed fine->info, finer->debug, finest->trace mappings; we should have run this through you once. \n\nNext time please throw out the patch if we screw up and let us scramble to fix the mess we created... appreciate your patience. Thanks!",
+      "created": "2006-06-03 13:24:53+00:00",
+      "updated": "2006-06-03 13:24:53+00:00"
+    },
+    {
+      "id": "12415109",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=acmurthy",
+        "name": "acmurthy",
+        "key": "acmurthy",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Arun Murthy",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "We seemed to have missed out getMapOutput.jsp in the earlier patch... here's the fix. Thanks!",
+      "created": "2006-06-07 17:52:37+00:00",
+      "updated": "2006-06-07 17:52:37+00:00"
+    },
+    {
+      "id": "12417395",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=sanjay.dahiya",
+        "name": "sanjay.dahiya",
+        "key": "sanjay.dahiya",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Sanjay Dahiya",
+        "active": true,
+        "timeZone": "Etc/UTC"
+      },
+      "body": "New extensions to hadoop logging - \n - Rolling based on both time and size. \n - compress\n - Move rolled over files to DFS\n\nLog4J 1.3 has a better way of defining rollover policies and actions, I have a working implementation of above  but they depend on Log4J 1.3. Also the properties file will change to an XML format as the .properties format doesn't support all the configurations yet. Are we willing to move to 1.3 and XML log4j properties ?",
+      "created": "2006-06-23 07:11:32+00:00",
+      "updated": "2006-06-23 07:11:32+00:00"
+    },
+    {
+      "id": "12418684",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=barry",
+        "name": "barry",
+        "key": "barry",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Barry Kaplan",
+        "active": true,
+        "timeZone": "Etc/UTC"
+      },
+      "body": "According to the tomcat 5.5 docs, XML configuration files don't allow you to use naming convention for logs within tomcat. As someone who uses tomcat and hadoop I would prefer not using the xml log. \n\nYou can (and should) be more picky about which packages to include in the logging. Tomcat 5.5 uses defines loggers by Engine and Host names. For example, for a default Catalina localhost log, add this to the end of the log4j.properties above. Note that there are known issues with using this naming convention (with square brackets) in log4j XML based configuration files, so we recommend you use a properties file as described until a future version of log4j allows this convention.\n\n",
+      "created": "2006-07-01 00:16:37+00:00",
+      "updated": "2006-07-01 00:16:37+00:00"
+    },
+    {
+      "id": "12418962",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=sanjay.dahiya",
+        "name": "sanjay.dahiya",
+        "key": "sanjay.dahiya",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Sanjay Dahiya",
+        "active": true,
+        "timeZone": "Etc/UTC"
+      },
+      "body": "I'm looking at support logging features like (cap on time/size, gzip) and archiving log files into DFS. Log4j 1.3 with XML configurations makes it real easy to implement all these with the RollingPolicies and Triggers separated from appenders. properties file format doesn't allow for specifying RollingPolicies externally for existing Appenders. \nAre you embedding Tomcat within Hadoop or using Hadoop from a webapp? Is it possible to make tomcat use its own properties file or configure Log4J for the webapp separately in the webapp's class loader? ",
+      "created": "2006-07-03 19:50:19+00:00",
+      "updated": "2006-07-03 19:50:19+00:00"
+    },
+    {
+      "id": "12419360",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=barry",
+        "name": "barry",
+        "key": "barry",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Barry Kaplan",
+        "active": true,
+        "timeZone": "Etc/UTC"
+      },
+      "body": "I am using Hadoop within tomcat, my guess is there is a way to make hadoop use its own log properties that is separate from tomcat's, but it will be rather annoying to have a separate log4j.properties on a library by library basis.",
+      "created": "2006-07-06 06:26:33+00:00",
+      "updated": "2006-07-06 06:26:33+00:00"
+    },
+    {
+      "id": "12419672",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=sanjay.dahiya",
+        "name": "sanjay.dahiya",
+        "key": "sanjay.dahiya",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Sanjay Dahiya",
+        "active": true,
+        "timeZone": "Etc/UTC"
+      },
+      "body": "From what I understand, you are using hadoop client in tomcat. We need a light weight client for embedding in other apps for these use cases. That client can use apps logging configuration. \nThis logging is primarily targeted at Name node, data node, and trackers which generate logs on an ongoing basis. These log configurations need to be separated from Hadoop client in any case. ",
+      "created": "2006-07-07 16:40:29+00:00",
+      "updated": "2006-07-07 16:40:29+00:00"
+    },
+    {
+      "id": "12419742",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=eric14",
+        "name": "eric14",
+        "key": "eric14",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Eric Baldeschwieler",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "Is the client code logging?  If so we should file another bug to make this independent of all of the server logging for sure.  As barry explains his rig, I think he is actually running the hadoop servers inside tomcat as well.  This is a more complicated issue.  It may well make sense to support this, don't know enough about the environment to understand the pros and cons.  An obvious pro is that he has fewer processes to shepherd.  A con is that it isn't something anyone else has worked through or made work.  \n",
+      "created": "2006-07-07 23:29:22+00:00",
+      "updated": "2006-07-07 23:29:22+00:00"
+    },
+    {
+      "id": "12419744",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=eric14",
+        "name": "eric14",
+        "key": "eric14",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Eric Baldeschwieler",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "Barry, I've filed a new enhancement bug (ability to run datanodes in tomcat) to serve as an umbrella for this issue.  I think you've filed another bug on jeti related to this as well.  It would be good to tie all the tomcat issues together.  I'd be curious to know what others on the list (who know more about java/tomcat) think about this proposal, but I think we should move the discussion off this bug.\n\n\nhttp://issues.apache.org/jira/browse/HADOOP-353 - Run datanode (or other hadoop servers) inside tomcat",
+      "created": "2006-07-07 23:32:14+00:00",
+      "updated": "2006-07-07 23:32:14+00:00"
+    },
+    {
+      "id": "12423452",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=sanjay.dahiya",
+        "name": "sanjay.dahiya",
+        "key": "sanjay.dahiya",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Sanjay Dahiya",
+        "active": true,
+        "timeZone": "Etc/UTC"
+      },
+      "body": "A patch for rolling hadoop logs from all nodes to a well defined directory structure in DFS. Log files can be optionally compressed with gzip or zip. Log files are rolled over after a default 10MB or at midnight. The files are rolled over in DFS at a configurable path in a directory structure e.g. - \n<archive path>/year/month/day/logfile_index.log.gz  \n\nThis patch depends on Log4J 1.3, so we may not want to commit it in main trunk yet. It can be used if one doesnt mind using log4j's XML configuration file format. Log4J's DailyRollingFileAppendr will be deperecated in future versions so we will have to use this inevitably. \n\nPlease remember to upgrade the log4j.jar file to 1.3 version and remove the old version or this patch will not compile. \n",
+      "created": "2006-07-25 20:57:43+00:00",
+      "updated": "2006-07-25 20:57:43+00:00"
+    }
+  ]
+}

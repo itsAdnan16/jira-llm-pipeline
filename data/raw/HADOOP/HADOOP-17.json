@@ -1,0 +1,84 @@
+{
+  "key": "HADOOP-17",
+  "project": "HADOOP",
+  "fields": {
+    "summary": "tool to mount ndfs on linux",
+    "description": "tool to mount ndfs on linux. It depends on fuse and fuse-j.",
+    "created": "2006-02-03 15:59:31+00:00",
+    "updated": "2006-08-03 17:46:25+00:00",
+    "status": {
+      "self": "https://issues.apache.org/jira/rest/api/2/status/6",
+      "description": "The issue is considered finished, the resolution is correct. Issues which are not closed can be reopened.",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/statuses/closed.png",
+      "name": "Closed",
+      "id": "6",
+      "statusCategory": {
+        "self": "https://issues.apache.org/jira/rest/api/2/statuscategory/3",
+        "id": 3,
+        "key": "done",
+        "colorName": "green",
+        "name": "Done"
+      }
+    },
+    "priority": {
+      "self": "https://issues.apache.org/jira/rest/api/2/priority/3",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/priorities/major.svg",
+      "name": "Major",
+      "id": "3"
+    },
+    "assignee": null,
+    "reporter": {
+      "self": "https://issues.apache.org/jira/rest/api/2/user?username=johnx",
+      "name": "johnx",
+      "key": "johnx",
+      "avatarUrls": {
+        "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+        "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+        "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+        "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+      },
+      "displayName": "John Xing",
+      "active": true,
+      "timeZone": "Etc/UTC"
+    },
+    "issue_type": {
+      "self": "https://issues.apache.org/jira/rest/api/2/issuetype/2",
+      "id": "2",
+      "description": "A new feature of the product, which has yet to be developed.",
+      "iconUrl": "https://issues.apache.org/jira/secure/viewavatar?size=xsmall&avatarId=21141&avatarType=issuetype",
+      "name": "New Feature",
+      "subtask": false,
+      "avatarId": 21141
+    },
+    "resolution": {
+      "self": "https://issues.apache.org/jira/rest/api/2/resolution/3",
+      "id": "3",
+      "description": "The problem is a duplicate of an existing issue.",
+      "name": "Duplicate"
+    },
+    "resolutiondate": "2006-02-07 04:18:42+00:00",
+    "comments": null
+  },
+  "comments": [
+    {
+      "id": "12365049",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=johnx",
+        "name": "johnx",
+        "key": "johnx",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "John Xing",
+        "active": true,
+        "timeZone": "Etc/UTC"
+      },
+      "body": "It works with current nutch-0.8-dev. Will be ported to hadoop after ndfs is moved.",
+      "created": "2006-02-03 16:02:54+00:00",
+      "updated": "2006-02-03 16:02:54+00:00"
+    }
+  ]
+}

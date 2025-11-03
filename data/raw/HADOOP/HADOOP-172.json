@@ -1,0 +1,97 @@
+{
+  "key": "HADOOP-172",
+  "project": "HADOOP",
+  "fields": {
+    "summary": "rpc doesn't handle returning null for a String[]",
+    "description": "The job tracker gets errors in returning the result from pollForTaskWithClosedJob\n\n060427 100434 Served: pollForTaskWithClosedJob 0\ndeclaredClass = [Ljava.lang.String;\ninstance class = org.apache.hadoop.io.NullWritable\n        at org.apache.hadoop.io.ObjectWritable.writeObject(ObjectWritable.java:95)\n        at org.apache.hadoop.io.ObjectWritable.write(ObjectWritable.java:65)\n        at org.apache.hadoop.ipc.Server$Handler.run(Server.java:230)\n",
+    "created": "2006-04-28 00:15:15+00:00",
+    "updated": "2006-08-03 17:46:38+00:00",
+    "status": {
+      "self": "https://issues.apache.org/jira/rest/api/2/status/6",
+      "description": "The issue is considered finished, the resolution is correct. Issues which are not closed can be reopened.",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/statuses/closed.png",
+      "name": "Closed",
+      "id": "6",
+      "statusCategory": {
+        "self": "https://issues.apache.org/jira/rest/api/2/statuscategory/3",
+        "id": 3,
+        "key": "done",
+        "colorName": "green",
+        "name": "Done"
+      }
+    },
+    "priority": {
+      "self": "https://issues.apache.org/jira/rest/api/2/priority/1",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/priorities/blocker.svg",
+      "name": "Blocker",
+      "id": "1"
+    },
+    "assignee": {
+      "self": "https://issues.apache.org/jira/rest/api/2/user?username=omalley",
+      "name": "omalley",
+      "key": "owen.omalley",
+      "avatarUrls": {
+        "48x48": "https://issues.apache.org/jira/secure/useravatar?ownerId=owen.omalley&avatarId=54139",
+        "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=owen.omalley&avatarId=54139",
+        "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=owen.omalley&avatarId=54139",
+        "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=owen.omalley&avatarId=54139"
+      },
+      "displayName": "Owen O'Malley",
+      "active": true,
+      "timeZone": "America/Los_Angeles"
+    },
+    "reporter": {
+      "self": "https://issues.apache.org/jira/rest/api/2/user?username=omalley",
+      "name": "omalley",
+      "key": "owen.omalley",
+      "avatarUrls": {
+        "48x48": "https://issues.apache.org/jira/secure/useravatar?ownerId=owen.omalley&avatarId=54139",
+        "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=owen.omalley&avatarId=54139",
+        "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=owen.omalley&avatarId=54139",
+        "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=owen.omalley&avatarId=54139"
+      },
+      "displayName": "Owen O'Malley",
+      "active": true,
+      "timeZone": "America/Los_Angeles"
+    },
+    "issue_type": {
+      "self": "https://issues.apache.org/jira/rest/api/2/issuetype/1",
+      "id": "1",
+      "description": "A problem which impairs or prevents the functions of the product.",
+      "iconUrl": "https://issues.apache.org/jira/secure/viewavatar?size=xsmall&avatarId=21133&avatarType=issuetype",
+      "name": "Bug",
+      "subtask": false,
+      "avatarId": 21133
+    },
+    "resolution": {
+      "self": "https://issues.apache.org/jira/rest/api/2/resolution/1",
+      "id": "1",
+      "description": "A fix for this issue is checked into the tree and tested.",
+      "name": "Fixed"
+    },
+    "resolutiondate": "2006-04-28 03:58:22+00:00",
+    "comments": null
+  },
+  "comments": [
+    {
+      "id": "12376821",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=omalley",
+        "name": "omalley",
+        "key": "owen.omalley",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?ownerId=owen.omalley&avatarId=54139",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=owen.omalley&avatarId=54139",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=owen.omalley&avatarId=54139",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=owen.omalley&avatarId=54139"
+        },
+        "displayName": "Owen O'Malley",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "Doug fixed this this morning.",
+      "created": "2006-04-28 03:58:22+00:00",
+      "updated": "2006-04-28 03:58:22+00:00"
+    }
+  ]
+}

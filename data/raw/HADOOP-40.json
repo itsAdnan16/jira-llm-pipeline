@@ -1,0 +1,124 @@
+{
+  "key": "HADOOP-40",
+  "project": "",
+  "fields": {
+    "summary": "bufferSize argument is ignored in FileSystem.create(File, boolean, int)",
+    "description": "org.apache.hadoop.fs.FileSystem.create(File f, boolean overwrite, int bufferSize)\n\nignores the input parameter bufferSize.\nIt passes further down the internal configuration, which includes the buffer size, but not the parameter value.\nThis works fine within the file system, since everything that calls create extracts buffer size from the same config. \nMapReduce although is probably affected by that, see \n\norg.apache.hadoop.io.SequenceFile.Sorter.MergeQueue.MergeQueue(int size, String outName, boolean done)\n\nThe attached patch would fix it.",
+    "created": "2006-02-18 07:43:11+00:00",
+    "updated": "2006-08-03 17:46:28+00:00",
+    "status": {
+      "self": "https://issues.apache.org/jira/rest/api/2/status/6",
+      "description": "The issue is considered finished, the resolution is correct. Issues which are not closed can be reopened.",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/statuses/closed.png",
+      "name": "Closed",
+      "id": "6",
+      "statusCategory": {
+        "self": "https://issues.apache.org/jira/rest/api/2/statuscategory/3",
+        "id": 3,
+        "key": "done",
+        "colorName": "green",
+        "name": "Done"
+      }
+    },
+    "priority": {
+      "self": "https://issues.apache.org/jira/rest/api/2/priority/4",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/priorities/minor.svg",
+      "name": "Minor",
+      "id": "4"
+    },
+    "assignee": null,
+    "reporter": {
+      "self": "https://issues.apache.org/jira/rest/api/2/user?username=shv",
+      "name": "shv",
+      "key": "shv",
+      "avatarUrls": {
+        "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+        "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+        "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+        "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+      },
+      "displayName": "Konstantin Shvachko",
+      "active": true,
+      "timeZone": "America/Los_Angeles"
+    },
+    "issue_type": {
+      "self": "https://issues.apache.org/jira/rest/api/2/issuetype/1",
+      "id": "1",
+      "description": "A problem which impairs or prevents the functions of the product.",
+      "iconUrl": "https://issues.apache.org/jira/secure/viewavatar?size=xsmall&avatarId=21133&avatarType=issuetype",
+      "name": "Bug",
+      "subtask": false,
+      "avatarId": 21133
+    },
+    "resolution": {
+      "self": "https://issues.apache.org/jira/rest/api/2/resolution/1",
+      "id": "1",
+      "description": "A fix for this issue is checked into the tree and tested.",
+      "name": "Fixed"
+    },
+    "resolutiondate": "2006-02-25 06:38:22+00:00",
+    "comments": null
+  },
+  "comments": [
+    {
+      "id": "12367544",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "I don't think we should modify the configuration in this case, since that will affect code which uses this configuration that runs later.  SequenceFile uses very large buffers when sorting and merging, in order to minimize disk seeks, and we don't want everything to start using such large buffers.\n\nSo why not just pass the missing parameter down?  I've attached a patch that does this.  Does this look good to you?",
+      "created": "2006-02-24 02:21:52+00:00",
+      "updated": "2006-02-24 02:21:52+00:00"
+    },
+    {
+      "id": "12367715",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "I just committed my patch for this.",
+      "created": "2006-02-25 06:38:22+00:00",
+      "updated": "2006-02-25 06:38:22+00:00"
+    },
+    {
+      "id": "12367738",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=shv",
+        "name": "shv",
+        "key": "shv",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Konstantin Shvachko",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "Yes. This is the right way of doing it.\nIt particularly makes sense, since the main file and the checksum file\ndo not necessarily need to share the same buffer size.\nWith the file buffer large the checksum buffer doesn't need to be large at all.",
+      "created": "2006-02-25 08:24:11+00:00",
+      "updated": "2006-02-25 08:24:11+00:00"
+    }
+  ]
+}

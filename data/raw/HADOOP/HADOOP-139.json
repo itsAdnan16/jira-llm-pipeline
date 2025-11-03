@@ -1,0 +1,117 @@
+{
+  "key": "HADOOP-139",
+  "project": "HADOOP",
+  "fields": {
+    "summary": "Deadlock in LocalFileSystem lock/release",
+    "description": "LocalFileSystem lock/release methods marked synchronized and inside they lock file channel - this produces deadlock situation. Let's see how it happens: \n1. First thread locks the file and starts some long-running process.\n2. Second thread tries to lock the file and it blocks inside channel lock method. It  keeps LocalFileSystem instance \"locked\" as well. \n3. First thread finished it's processing and tries to release lock - it blocks because LocalFileSystem instance is \"locked\" by second thread - both threads are waiting to each other. \n",
+    "created": "2006-04-15 10:39:58+00:00",
+    "updated": "2006-08-03 17:46:36+00:00",
+    "status": {
+      "self": "https://issues.apache.org/jira/rest/api/2/status/6",
+      "description": "The issue is considered finished, the resolution is correct. Issues which are not closed can be reopened.",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/statuses/closed.png",
+      "name": "Closed",
+      "id": "6",
+      "statusCategory": {
+        "self": "https://issues.apache.org/jira/rest/api/2/statuscategory/3",
+        "id": 3,
+        "key": "done",
+        "colorName": "green",
+        "name": "Done"
+      }
+    },
+    "priority": {
+      "self": "https://issues.apache.org/jira/rest/api/2/priority/3",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/priorities/major.svg",
+      "name": "Major",
+      "id": "3"
+    },
+    "assignee": {
+      "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+      "name": "cutting",
+      "key": "cutting",
+      "avatarUrls": {
+        "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+        "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+        "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+        "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+      },
+      "displayName": "Doug Cutting",
+      "active": true,
+      "timeZone": "America/Los_Angeles"
+    },
+    "reporter": {
+      "self": "https://issues.apache.org/jira/rest/api/2/user?username=ibolotin",
+      "name": "ibolotin",
+      "key": "ibolotin",
+      "avatarUrls": {
+        "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+        "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+        "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+        "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+      },
+      "displayName": "Igor Bolotin",
+      "active": true,
+      "timeZone": "America/Los_Angeles"
+    },
+    "issue_type": {
+      "self": "https://issues.apache.org/jira/rest/api/2/issuetype/1",
+      "id": "1",
+      "description": "A problem which impairs or prevents the functions of the product.",
+      "iconUrl": "https://issues.apache.org/jira/secure/viewavatar?size=xsmall&avatarId=21133&avatarType=issuetype",
+      "name": "Bug",
+      "subtask": false,
+      "avatarId": 21133
+    },
+    "resolution": {
+      "self": "https://issues.apache.org/jira/rest/api/2/resolution/1",
+      "id": "1",
+      "description": "A fix for this issue is checked into the tree and tested.",
+      "name": "Fixed"
+    },
+    "resolutiondate": "2006-04-19 02:36:59+00:00",
+    "comments": null
+  },
+  "comments": [
+    {
+      "id": "12374598",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=ibolotin",
+        "name": "ibolotin",
+        "key": "ibolotin",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Igor Bolotin",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "Attached is proposed patch. I removed entire lock/release method synchronization and replaced it with critical section synchronization for sets accesses - leaving channel lock/release calls outside of synchronized statement. ",
+      "created": "2006-04-15 12:41:25+00:00",
+      "updated": "2006-04-15 12:41:25+00:00"
+    },
+    {
+      "id": "12374983",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "I just committed this.  Thanks, Igor!\n\nThe patch did not apply directly, due to other changes made to Hadoop since you contributed it.  So I had to apply parts of it manually.  Please check that it still looks correct.  Thanks!",
+      "created": "2006-04-19 02:18:39+00:00",
+      "updated": "2006-04-19 02:18:39+00:00"
+    }
+  ]
+}

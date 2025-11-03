@@ -1,0 +1,144 @@
+{
+  "key": "HADOOP-65",
+  "project": "",
+  "fields": {
+    "summary": "add a record I/O framework to hadoop",
+    "description": "Hadoop could benefit greatly from a simple record I/O framework that enables the specification of simple record types and enables the generation of code for serialization/deserialization in multiple target languages. The framework would handle a small well understood set of primitive types and simple compositions of these (structs, vectors, maps) . It would be possible to leverage this framework to express I/O in MapReduce computations and to use this as the basis for Hadoops RPC implementation. This would make interfacing with code in languages other than Java much easier.",
+    "created": "2006-03-07 07:12:40+00:00",
+    "updated": "2006-08-03 17:46:29+00:00",
+    "status": {
+      "self": "https://issues.apache.org/jira/rest/api/2/status/6",
+      "description": "The issue is considered finished, the resolution is correct. Issues which are not closed can be reopened.",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/statuses/closed.png",
+      "name": "Closed",
+      "id": "6",
+      "statusCategory": {
+        "self": "https://issues.apache.org/jira/rest/api/2/statuscategory/3",
+        "id": 3,
+        "key": "done",
+        "colorName": "green",
+        "name": "Done"
+      }
+    },
+    "priority": {
+      "self": "https://issues.apache.org/jira/rest/api/2/priority/4",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/priorities/minor.svg",
+      "name": "Minor",
+      "id": "4"
+    },
+    "assignee": null,
+    "reporter": {
+      "self": "https://issues.apache.org/jira/rest/api/2/user?username=sameerp",
+      "name": "sameerp",
+      "key": "sameerp",
+      "avatarUrls": {
+        "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=34061",
+        "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=34061",
+        "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=34061",
+        "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=34061"
+      },
+      "displayName": "Sameer Paranjpye",
+      "active": true,
+      "timeZone": "America/Los_Angeles"
+    },
+    "issue_type": {
+      "self": "https://issues.apache.org/jira/rest/api/2/issuetype/2",
+      "id": "2",
+      "description": "A new feature of the product, which has yet to be developed.",
+      "iconUrl": "https://issues.apache.org/jira/secure/viewavatar?size=xsmall&avatarId=21141&avatarType=issuetype",
+      "name": "New Feature",
+      "subtask": false,
+      "avatarId": 21141
+    },
+    "resolution": {
+      "self": "https://issues.apache.org/jira/rest/api/2/resolution/1",
+      "id": "1",
+      "description": "A fix for this issue is checked into the tree and tested.",
+      "name": "Fixed"
+    },
+    "resolutiondate": "2006-05-04 09:04:14+00:00",
+    "comments": null
+  },
+  "comments": [
+    {
+      "id": "12377655",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=milindb",
+        "name": "milindb",
+        "key": "milindb",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Milind Barve",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "I have attached a patch for Hadoop record I/O framework. It contains a translator for generating Java or C++ code from the record definitions, and a Java and C++ runtime library for serializing and deserializing records in binary, CSV, and XML formats. Generated Java code for records implements the WritableComparable interface, so these records could be used as keys and values for the Hadooop map-reduce framework. See the package.html file in org.apache.hadoop.record for full description.",
+      "created": "2006-05-04 05:23:06+00:00",
+      "updated": "2006-05-04 05:23:06+00:00"
+    },
+    {
+      "id": "12377678",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "I have committed this.  It looks great!  Thanks, Milind!",
+      "created": "2006-05-04 09:04:14+00:00",
+      "updated": "2006-05-04 09:04:14+00:00"
+    },
+    {
+      "id": "12377702",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "Looking a bit more closely, I see that some of the packages and classes are missing javadoc.  Can you please supply an additional patch which adds this?  In many cases, javadoc comments are only needed on base classes and interfaces (e.g., JType, InputArchive, OutputArchive) as they will automatically propagate to subclasses & implementations.  Also, the JavaCC-generated code will in many places lack javadoc, but a package.html explaining that the package contains only generated code would be useful.",
+      "created": "2006-05-04 11:11:15+00:00",
+      "updated": "2006-05-04 11:11:15+00:00"
+    },
+    {
+      "id": "12377844",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=milindb",
+        "name": "milindb",
+        "key": "milindb",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Milind Barve",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "I realized that some of the classes which were earlier package-private had to be made public, and therefore are lacking in class comments. I will add comments and will submit a patch.",
+      "created": "2006-05-05 00:00:40+00:00",
+      "updated": "2006-05-05 00:00:40+00:00"
+    }
+  ]
+}

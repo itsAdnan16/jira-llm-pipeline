@@ -1,0 +1,204 @@
+{
+  "key": "HADOOP-60",
+  "project": "HADOOP",
+  "fields": {
+    "summary": "Specification of alternate conf. directory",
+    "description": "Currently, hadoop configuration must be done by making edits and addition to ${HADOOP_HOME}/conf.  Allowing specification of an alternate configuration directory will allow keeping configuration and binary distinct.  Benefits include: Binary can be made read-only; or binary is blanket-updateable with configuration undisturbed.",
+    "created": "2006-02-28 01:56:17+00:00",
+    "updated": "2006-08-03 17:46:29+00:00",
+    "status": {
+      "self": "https://issues.apache.org/jira/rest/api/2/status/6",
+      "description": "The issue is considered finished, the resolution is correct. Issues which are not closed can be reopened.",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/statuses/closed.png",
+      "name": "Closed",
+      "id": "6",
+      "statusCategory": {
+        "self": "https://issues.apache.org/jira/rest/api/2/statuscategory/3",
+        "id": 3,
+        "key": "done",
+        "colorName": "green",
+        "name": "Done"
+      }
+    },
+    "priority": {
+      "self": "https://issues.apache.org/jira/rest/api/2/priority/4",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/priorities/minor.svg",
+      "name": "Minor",
+      "id": "4"
+    },
+    "assignee": null,
+    "reporter": {
+      "self": "https://issues.apache.org/jira/rest/api/2/user?username=stack",
+      "name": "stack",
+      "key": "stack",
+      "avatarUrls": {
+        "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+        "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+        "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+        "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+      },
+      "displayName": "Michael Stack",
+      "active": true,
+      "timeZone": "America/Los_Angeles"
+    },
+    "issue_type": {
+      "self": "https://issues.apache.org/jira/rest/api/2/issuetype/4",
+      "id": "4",
+      "description": "An improvement or enhancement to an existing feature or task.",
+      "iconUrl": "https://issues.apache.org/jira/secure/viewavatar?size=xsmall&avatarId=21140&avatarType=issuetype",
+      "name": "Improvement",
+      "subtask": false,
+      "avatarId": 21140
+    },
+    "resolution": {
+      "self": "https://issues.apache.org/jira/rest/api/2/resolution/1",
+      "id": "1",
+      "description": "A fix for this issue is checked into the tree and tested.",
+      "name": "Fixed"
+    },
+    "resolutiondate": "2006-03-03 03:52:36+00:00",
+    "comments": null
+  },
+  "comments": [
+    {
+      "id": "12367986",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=stack",
+        "name": "stack",
+        "key": "stack",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Michael Stack",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "HADOOP_CONF_DIR patch.  Passes HADOOP_CONF_DIR setting to subscripts and forwards the environment variable over the ssh chasm (if pertinent config. made to remote ssh_config).",
+      "created": "2006-02-28 01:58:56+00:00",
+      "updated": "2006-02-28 01:58:56+00:00"
+    },
+    {
+      "id": "12368408",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "I should have committed this yesterday, before I made a bunch of other changes to these scripts.  Now it no longer applies!\n\nMichael, can you please regenerate this against the current sources?  Thanks!",
+      "created": "2006-03-02 09:45:54+00:00",
+      "updated": "2006-03-02 09:45:54+00:00"
+    },
+    {
+      "id": "12368411",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=omalley",
+        "name": "omalley",
+        "key": "owen.omalley",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?ownerId=owen.omalley&avatarId=54139",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=owen.omalley&avatarId=54139",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=owen.omalley&avatarId=54139",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=owen.omalley&avatarId=54139"
+        },
+        "displayName": "Owen O'Malley",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "Looking at your patch, I would change the setting line from:\nHADOOP_CONF_DIR=${HADOOP_CONF_DIR:=$HADOOP_HOME/conf}\nto:\nHADOOP_CONF_DIR=${HADOOP_CONF_DIR:-$HADOOP_HOME/conf}\nbecause you don't need the redundant assignment.\n\nYou also need to surround all of the file/directory names with quotes so that you support spaces in directory names.\n\n",
+      "created": "2006-03-02 09:57:01+00:00",
+      "updated": "2006-03-02 09:57:01+00:00"
+    },
+    {
+      "id": "12368427",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=stack",
+        "name": "stack",
+        "key": "stack",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Michael Stack",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "Version of patch that will go against 382230.\n\nThanks for the feedback Owen.  I integrated your comments into this version of the patch.",
+      "created": "2006-03-02 10:41:25+00:00",
+      "updated": "2006-03-02 10:41:25+00:00"
+    },
+    {
+      "id": "12368552",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=stack",
+        "name": "stack",
+        "key": "stack",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Michael Stack",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "Version 3 is version 2 plus edit of hadoop-env.template modifying defaults for HADOOP_SSH_OPTS.",
+      "created": "2006-03-03 02:39:30+00:00",
+      "updated": "2006-03-03 02:39:30+00:00"
+    },
+    {
+      "id": "12368567",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "I just committed this.  I had to add a few more quotes to get things to work correctly with spaces in directory names, removed a spurious variable setting on the 'nohup' line of hadoop-daemon.sh, and updated a comment.\n",
+      "created": "2006-03-03 03:52:09+00:00",
+      "updated": "2006-03-03 03:52:09+00:00"
+    },
+    {
+      "id": "12368568",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "Fixed!",
+      "created": "2006-03-03 03:52:36+00:00",
+      "updated": "2006-03-03 03:52:36+00:00"
+    }
+  ]
+}

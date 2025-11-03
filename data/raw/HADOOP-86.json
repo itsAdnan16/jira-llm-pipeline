@@ -1,0 +1,177 @@
+{
+  "key": "HADOOP-86",
+  "project": "",
+  "fields": {
+    "summary": "If corrupted map outputs, reducers get stuck fetching forever",
+    "description": "In our rack, there is a machine that reliably corrupts map output parts.  When reducers try to pickup the map output, Server#Handler checks the checksum, notices corruption, moves the bad map output part aside and throws a ChecksumException.  Undeterred, the reducer comes back again minutes later only this time it gets a FileNotFoundException out of Server#Handler (Because the part was moved aside).  And so it goes till the cows come home.\n\nDoug applied a patch that in map output  file, when it notices a fatal exception, it logs a severe error on the TaskTracker#LOG. Then in TT, if a severe logging has occurred, TT does a soft restart (TT stays up but closes down all services and then goes through init again).  This patch was committed (after I suggested it was working), only, later, I noticed the severe log flag is not cleared across TT restart so TT goes into a cycle of continuous restarts.  \n\nA further patch that clears the severe flag was posted to the list.  This improves things but has issues too in that on revival, the TT continues to be plagued by reducers looking for parts no longer available for a period of ten minutes or so until the JobTracker gets around to updating them about change in where to go get map outputs.  During this period, the TT gets restarted 5-10 times -- but eventually comes back on line (There may have been too much damage done during this period of flux making it so the job will fail).\n\nThis issue covers implementing a better solution.  \n\nSuggestions include having the TT stay down a period to avoid the incoming reducers or somehow examining the incoming reducer request, checking its list of tasks to see if it knows anything of the reducers' request and rejecting it with a non-severe error if not a map of the currently running TT.  A little birdie (named DC) suggests a better soln. is probably an addition to intertrackerprotocol so either the TT or the reducer updates JT when corrupted map output.",
+    "created": "2006-03-17 01:58:09+00:00",
+    "updated": "2006-08-03 17:46:32+00:00",
+    "status": {
+      "self": "https://issues.apache.org/jira/rest/api/2/status/6",
+      "description": "The issue is considered finished, the resolution is correct. Issues which are not closed can be reopened.",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/statuses/closed.png",
+      "name": "Closed",
+      "id": "6",
+      "statusCategory": {
+        "self": "https://issues.apache.org/jira/rest/api/2/statuscategory/3",
+        "id": 3,
+        "key": "done",
+        "colorName": "green",
+        "name": "Done"
+      }
+    },
+    "priority": {
+      "self": "https://issues.apache.org/jira/rest/api/2/priority/3",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/priorities/major.svg",
+      "name": "Major",
+      "id": "3"
+    },
+    "assignee": {
+      "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+      "name": "cutting",
+      "key": "cutting",
+      "avatarUrls": {
+        "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+        "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+        "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+        "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+      },
+      "displayName": "Doug Cutting",
+      "active": true,
+      "timeZone": "America/Los_Angeles"
+    },
+    "reporter": {
+      "self": "https://issues.apache.org/jira/rest/api/2/user?username=stack",
+      "name": "stack",
+      "key": "stack",
+      "avatarUrls": {
+        "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+        "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+        "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+        "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+      },
+      "displayName": "Michael Stack",
+      "active": true,
+      "timeZone": "America/Los_Angeles"
+    },
+    "issue_type": {
+      "self": "https://issues.apache.org/jira/rest/api/2/issuetype/1",
+      "id": "1",
+      "description": "A problem which impairs or prevents the functions of the product.",
+      "iconUrl": "https://issues.apache.org/jira/secure/viewavatar?size=xsmall&avatarId=21133&avatarType=issuetype",
+      "name": "Bug",
+      "subtask": false,
+      "avatarId": 21133
+    },
+    "resolution": {
+      "self": "https://issues.apache.org/jira/rest/api/2/resolution/1",
+      "id": "1",
+      "description": "A fix for this issue is checked into the tree and tested.",
+      "name": "Fixed"
+    },
+    "resolutiondate": "2006-03-21 03:08:51+00:00",
+    "comments": null
+  },
+  "comments": [
+    {
+      "id": "12370751",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "I just committed something that should help tremendously in fixing this.  One can now get the RPC server context in code that runs under a server.  This will let us, when we encounter an error in MapOutputFile, instead of using LOG.severe(), to get a pointer to the TaskTracker instance and call a method that will propagate the error back (over the InterTrackerProtocol) to the JobTracker, where it belongs.",
+      "created": "2006-03-17 05:28:17+00:00",
+      "updated": "2006-03-17 05:28:17+00:00"
+    },
+    {
+      "id": "12370760",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "Here's a completely untested patch.  It does compile!\n\nI don't think we need to add a new method to the InterTrackerProtocol, rather we just need to get the failure propagated in the next heartbeat to the TaskTracker.\n",
+      "created": "2006-03-17 06:29:20+00:00",
+      "updated": "2006-03-17 06:29:20+00:00"
+    },
+    {
+      "id": "12370898",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=stack",
+        "name": "stack",
+        "key": "stack",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Michael Stack",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "Testing over w/e.",
+      "created": "2006-03-18 06:21:56+00:00",
+      "updated": "2006-03-18 06:21:56+00:00"
+    },
+    {
+      "id": "12371117",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=stack",
+        "name": "stack",
+        "key": "stack",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Michael Stack",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "+1 on patch.  It works for me.\n\nHere is failure over on a tasktracker:\n\n060318 190019 Moving bad file /0/hadoop/tmp/part-24.out/task_m_4eop89 to /0/bad_files/task_m_4eop89.-1553185447\n060318 190019 Can't read map output:/0/hadoop/tmp/part-24.out/task_m_4eop89\norg.apache.hadoop.fs.ChecksumException: Checksum error: /0/hadoop/tmp/part-24.out/task_m_4eop89 at 1598464\n    at org.apache.hadoop.fs.FSDataInputStream$Checker.verifySum(FSDataInputStream.java:122)\n    at org.apache.hadoop.fs.FSDataInputStream$Checker.read(FSDataInputStream.java:98)\n    at org.apache.hadoop.fs.FSDataInputStream$PositionCache.read(FSDataInputStream.java:158)\n    at java.io.BufferedInputStream.read1(BufferedInputStream.java:254)\n    at java.io.BufferedInputStream.read(BufferedInputStream.java:313)\n    at java.io.DataInputStream.read(DataInputStream.java:80)\n    at org.apache.hadoop.mapred.MapOutputFile.write(MapOutputFile.java:129)\n    at org.apache.hadoop.io.ObjectWritable.writeObject(ObjectWritable.java:117)\n    at org.apache.hadoop.io.ObjectWritable.write(ObjectWritable.java:64)\n    at org.apache.hadoop.ipc.Server$Handler.run(Server.java:229)\n060318 190019 Reporting output lost:task_m_4eop89\n\nReducers must be getting the message fast because after above  no one else comes looking for the corrupted part (No FileNotFoundExceptions in TT log).\n\nMeanwhile over on jobtracker I see following sequence....\n\n060318 184356 Adding task 'task_m_4eop89' to tip tip_ccbgb1, for tracker 'tracker_14754' on ia109307.archive.org\n...\n060318 184716 Taskid 'task_m_4eop89' has finished successfully.\n...\n060318 184716 Task 'task_m_4eop89' has completed.\n...\n060318 190028 Task 'task_m_4eop89' has been lost.\n...\n060318 190029 Adding task 'task_m_7mdx9h' to tip tip_ccbgb1, for tracker 'tracker_61554' on ia109333.archive.org\n...\n060318 190329 Taskid 'task_m_7mdx9h' has finished successfully.\n...\n060318 190329 Task 'task_m_7mdx9h' has completed.\n...\n\ni.e. Task completes successfully.  Subsequently a message comes in that its been lost and a new task is scheduled which in turn completes.\n\n",
+      "created": "2006-03-21 02:04:56+00:00",
+      "updated": "2006-03-21 02:04:56+00:00"
+    },
+    {
+      "id": "12371129",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "I just committed the fix for this.  Thanks, Michael, for helping to debug it.",
+      "created": "2006-03-21 03:08:51+00:00",
+      "updated": "2006-03-21 03:08:51+00:00"
+    }
+  ]
+}

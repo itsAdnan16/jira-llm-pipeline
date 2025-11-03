@@ -1,0 +1,117 @@
+{
+  "key": "HADOOP-219",
+  "project": "HADOOP",
+  "fields": {
+    "summary": "SequenceFile#handleChecksumException NPE",
+    "description": "The SequenceFile#handleChecksumException assumes the conf data member has been set.  It will not be set if we use the 'Reader(FileSystem fs, Path file, int bufferSize, long start, long length)' constructor.  The latter is used by ReduceTask Sorter:\n\n\njava.lang.NullPointerException\n\tat org.apache.hadoop.io.SequenceFile$Reader.handleChecksumException(SequenceFile.java:407)\n\tat org.apache.hadoop.io.SequenceFile$Reader.next(SequenceFile.java:400)\n\tat org.apache.hadoop.io.SequenceFile$Sorter$MergeStream.next(SequenceFile.java:837)\n\tat org.apache.hadoop.io.SequenceFile$Sorter$MergeQueue.merge(SequenceFile.java:881)\n\tat org.apache.hadoop.io.SequenceFile$Sorter$MergePass.run(SequenceFile.java:766)\n\tat org.apache.hadoop.io.SequenceFile$Sorter.mergePass(SequenceFile.java:702)\n\tat org.apache.hadoop.io.SequenceFile$Sorter.sort(SequenceFile.java:528)\n\tat org.apache.hadoop.mapred.ReduceTask.run(ReduceTask.java:253)\n\tat org.apache.hadoop.mapred.TaskTracker$Child.main(TaskTracker.java:787)\n",
+    "created": "2006-05-16 01:20:43+00:00",
+    "updated": "2006-08-03 17:46:42+00:00",
+    "status": {
+      "self": "https://issues.apache.org/jira/rest/api/2/status/6",
+      "description": "The issue is considered finished, the resolution is correct. Issues which are not closed can be reopened.",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/statuses/closed.png",
+      "name": "Closed",
+      "id": "6",
+      "statusCategory": {
+        "self": "https://issues.apache.org/jira/rest/api/2/statuscategory/3",
+        "id": 3,
+        "key": "done",
+        "colorName": "green",
+        "name": "Done"
+      }
+    },
+    "priority": {
+      "self": "https://issues.apache.org/jira/rest/api/2/priority/5",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/priorities/trivial.svg",
+      "name": "Trivial",
+      "id": "5"
+    },
+    "assignee": {
+      "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+      "name": "cutting",
+      "key": "cutting",
+      "avatarUrls": {
+        "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+        "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+        "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+        "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+      },
+      "displayName": "Doug Cutting",
+      "active": true,
+      "timeZone": "America/Los_Angeles"
+    },
+    "reporter": {
+      "self": "https://issues.apache.org/jira/rest/api/2/user?username=stack",
+      "name": "stack",
+      "key": "stack",
+      "avatarUrls": {
+        "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+        "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+        "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+        "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+      },
+      "displayName": "Michael Stack",
+      "active": true,
+      "timeZone": "America/Los_Angeles"
+    },
+    "issue_type": {
+      "self": "https://issues.apache.org/jira/rest/api/2/issuetype/1",
+      "id": "1",
+      "description": "A problem which impairs or prevents the functions of the product.",
+      "iconUrl": "https://issues.apache.org/jira/secure/viewavatar?size=xsmall&avatarId=21133&avatarType=issuetype",
+      "name": "Bug",
+      "subtask": false,
+      "avatarId": 21133
+    },
+    "resolution": {
+      "self": "https://issues.apache.org/jira/rest/api/2/resolution/1",
+      "id": "1",
+      "description": "A fix for this issue is checked into the tree and tested.",
+      "name": "Fixed"
+    },
+    "resolutiondate": "2006-05-16 03:14:22+00:00",
+    "comments": null
+  },
+  "comments": [
+    {
+      "id": "12402380",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=stack",
+        "name": "stack",
+        "key": "stack",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Michael Stack",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "If no conf, default to throwing the checksum error.",
+      "created": "2006-05-16 01:22:10+00:00",
+      "updated": "2006-05-16 01:22:10+00:00"
+    },
+    {
+      "id": "12402406",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "I just committed a fix for this.  Instead of checking for a null configuration, I tried to make sure that a non-null configuration is always available.  Thanks, Michael!",
+      "created": "2006-05-16 03:14:22+00:00",
+      "updated": "2006-05-16 03:14:22+00:00"
+    }
+  ]
+}

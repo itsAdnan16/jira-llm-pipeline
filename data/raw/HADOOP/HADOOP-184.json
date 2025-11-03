@@ -1,0 +1,196 @@
+{
+  "key": "HADOOP-184",
+  "project": "HADOOP",
+  "fields": {
+    "summary": "hadoop nightly build and regression test on a cluster",
+    "description": "create a jar file for the tests and have  filesystem and mapreduce tests on the cluster",
+    "created": "2006-05-02 04:38:42+00:00",
+    "updated": "2006-08-03 17:46:39+00:00",
+    "status": {
+      "self": "https://issues.apache.org/jira/rest/api/2/status/6",
+      "description": "The issue is considered finished, the resolution is correct. Issues which are not closed can be reopened.",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/statuses/closed.png",
+      "name": "Closed",
+      "id": "6",
+      "statusCategory": {
+        "self": "https://issues.apache.org/jira/rest/api/2/statuscategory/3",
+        "id": 3,
+        "key": "done",
+        "colorName": "green",
+        "name": "Done"
+      }
+    },
+    "priority": {
+      "self": "https://issues.apache.org/jira/rest/api/2/priority/4",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/priorities/minor.svg",
+      "name": "Minor",
+      "id": "4"
+    },
+    "assignee": {
+      "self": "https://issues.apache.org/jira/rest/api/2/user?username=mahadev",
+      "name": "mahadev",
+      "key": "mahadev",
+      "avatarUrls": {
+        "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+        "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+        "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+        "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+      },
+      "displayName": "Mahadev Konar",
+      "active": true,
+      "timeZone": "Etc/UTC"
+    },
+    "reporter": {
+      "self": "https://issues.apache.org/jira/rest/api/2/user?username=mahadev",
+      "name": "mahadev",
+      "key": "mahadev",
+      "avatarUrls": {
+        "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+        "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+        "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+        "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+      },
+      "displayName": "Mahadev Konar",
+      "active": true,
+      "timeZone": "Etc/UTC"
+    },
+    "issue_type": {
+      "self": "https://issues.apache.org/jira/rest/api/2/issuetype/6",
+      "id": "6",
+      "description": "A new unit, integration or system test.",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/issuetypes/requirement.png",
+      "name": "Test",
+      "subtask": false
+    },
+    "resolution": {
+      "self": "https://issues.apache.org/jira/rest/api/2/resolution/1",
+      "id": "1",
+      "description": "A fix for this issue is checked into the tree and tested.",
+      "name": "Fixed"
+    },
+    "resolutiondate": "2006-05-03 06:12:23+00:00",
+    "comments": null
+  },
+  "comments": [
+    {
+      "id": "12377285",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=mahadev",
+        "name": "mahadev",
+        "key": "mahadev",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Mahadev Konar",
+        "active": true,
+        "timeZone": "Etc/UTC"
+      },
+      "body": "filtered out owen's code for Example Driver to util ProgramDriver.java. Now both the AlltestDriver.java and ExampleDriver.java use this class. Changed the build file to generate a jar file for the test's as well. Changed the MapredLoadTest.java to make it a junit test and run it on a cluster as well.\nSo the tests can be run as \nbin/hadoop jar hadoop-0.2-test.jar  mapredtest args\nbin/hadoop jar hadoop-0.2-test.jar testfilesystem args\non a cluster.",
+      "created": "2006-05-02 04:45:17+00:00",
+      "updated": "2006-05-02 04:45:17+00:00"
+    },
+    {
+      "id": "12377460",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "I'm having trouble applying this patch:\n\n% patch -p 0 < ~/Desktop/nightly_build.patch patching file src/test/org/apache/hadoop/test/AllTestDriver.java patching file src/test/org/apache/hadoop/fs/TestFileSystem.java\npatching file src/test/org/apache/hadoop/mapred/TestMapRed.java\npatching file src/java/org/apache/hadoop/util/ProgramDriver.java\npatching file src/examples/org/apache/hadoop/examples/ExampleDriver.java\npatch: **** malformed patch at line 810: Index: build.xml\n",
+      "created": "2006-05-03 03:02:39+00:00",
+      "updated": "2006-05-03 03:02:39+00:00"
+    },
+    {
+      "id": "12377479",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=mahadev",
+        "name": "mahadev",
+        "key": "mahadev",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Mahadev Konar",
+        "active": true,
+        "timeZone": "Etc/UTC"
+      },
+      "body": "attaching the updated patch. should work now..\n",
+      "created": "2006-05-03 05:11:29+00:00",
+      "updated": "2006-05-03 05:11:29+00:00"
+    },
+    {
+      "id": "12377489",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "I just committed this.  Thanks, Mahadev.",
+      "created": "2006-05-03 06:12:22+00:00",
+      "updated": "2006-05-03 06:12:22+00:00"
+    },
+    {
+      "id": "12377670",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=mahadev",
+        "name": "mahadev",
+        "key": "mahadev",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Mahadev Konar",
+        "active": true,
+        "timeZone": "Etc/UTC"
+      },
+      "body": "My patch broke ant package.. It did not do a compile-test before. It does it now. The hadoop-test.jar is made available with the package now.",
+      "created": "2006-05-04 07:38:30+00:00",
+      "updated": "2006-05-04 07:38:30+00:00"
+    },
+    {
+      "id": "12377676",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "Thanks.  I committed this.",
+      "created": "2006-05-04 08:46:27+00:00",
+      "updated": "2006-05-04 08:46:27+00:00"
+    }
+  ]
+}

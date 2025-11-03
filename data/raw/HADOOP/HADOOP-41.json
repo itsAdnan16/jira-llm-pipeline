@@ -1,0 +1,144 @@
+{
+  "key": "HADOOP-41",
+  "project": "HADOOP",
+  "fields": {
+    "summary": "JAVA_OPTS for the TaskRunner Child",
+    "description": "Currently, its possible to set the java heap size the TaskRunner child runs in, but thats all thats configurable about the child process.  Hereabouts, we've found it useful being able to specify other options for the child JVM, especially when debugging and monitoring long-lived processes.  \n\nExamples of why its useful being able to set options are the child include:\n\n+ Being able to set '-server' option or '-c64'.\n+ Passing logging.properties to configure child logging.\n+ Enable and capture to file verbose GC logging or start the SUN JVM JMX agent for the child process.  Allows connecting with jconsole to watch long-lived children, their heap and thread usage, and when seemingly hung, take thread dumps.",
+    "created": "2006-02-18 09:47:33+00:00",
+    "updated": "2006-08-03 17:46:28+00:00",
+    "status": {
+      "self": "https://issues.apache.org/jira/rest/api/2/status/6",
+      "description": "The issue is considered finished, the resolution is correct. Issues which are not closed can be reopened.",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/statuses/closed.png",
+      "name": "Closed",
+      "id": "6",
+      "statusCategory": {
+        "self": "https://issues.apache.org/jira/rest/api/2/statuscategory/3",
+        "id": 3,
+        "key": "done",
+        "colorName": "green",
+        "name": "Done"
+      }
+    },
+    "priority": {
+      "self": "https://issues.apache.org/jira/rest/api/2/priority/4",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/priorities/minor.svg",
+      "name": "Minor",
+      "id": "4"
+    },
+    "assignee": null,
+    "reporter": {
+      "self": "https://issues.apache.org/jira/rest/api/2/user?username=stack",
+      "name": "stack",
+      "key": "stack",
+      "avatarUrls": {
+        "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+        "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+        "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+        "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+      },
+      "displayName": "Michael Stack",
+      "active": true,
+      "timeZone": "America/Los_Angeles"
+    },
+    "issue_type": {
+      "self": "https://issues.apache.org/jira/rest/api/2/issuetype/4",
+      "id": "4",
+      "description": "An improvement or enhancement to an existing feature or task.",
+      "iconUrl": "https://issues.apache.org/jira/secure/viewavatar?size=xsmall&avatarId=21140&avatarType=issuetype",
+      "name": "Improvement",
+      "subtask": false,
+      "avatarId": 21140
+    },
+    "resolution": {
+      "self": "https://issues.apache.org/jira/rest/api/2/resolution/1",
+      "id": "1",
+      "description": "A fix for this issue is checked into the tree and tested.",
+      "name": "Fixed"
+    },
+    "resolutiondate": "2006-02-24 08:36:39+00:00",
+    "comments": null
+  },
+  "comments": [
+    {
+      "id": "12366873",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=stack",
+        "name": "stack",
+        "key": "stack",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Michael Stack",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "Attached is a suggested patch for TaskRunner that reads a new configuration option, mapred.child.java.opts.  This new configuration subsumes mapred.child.heap.size. Paul Baclace coauthored this patch.",
+      "created": "2006-02-18 09:54:09+00:00",
+      "updated": "2006-02-18 09:54:09+00:00"
+    },
+    {
+      "id": "12367435",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "I like this, except that it is not back-compatible.  We should continue to support mapred.child.heap.size, so that folks who upgrade are not broken.",
+      "created": "2006-02-23 07:59:44+00:00",
+      "updated": "2006-02-23 07:59:44+00:00"
+    },
+    {
+      "id": "12367600",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=stack",
+        "name": "stack",
+        "key": "stack",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Michael Stack",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "Second attempt.  Addresses Doug comment.  In this patch, if mapred.child.heap.size is present in configuration, rather than just ignore it, its heap size setting wins out over any setting present in mapred.child.java.opts and a warning is emitted that this setting is deprecated.",
+      "created": "2006-02-24 08:21:44+00:00",
+      "updated": "2006-02-24 08:21:44+00:00"
+    },
+    {
+      "id": "12367603",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "I just committed this.  Thanks, Michael!",
+      "created": "2006-02-24 08:36:39+00:00",
+      "updated": "2006-02-24 08:36:39+00:00"
+    }
+  ]
+}

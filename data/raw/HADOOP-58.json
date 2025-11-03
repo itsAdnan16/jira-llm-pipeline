@@ -1,0 +1,144 @@
+{
+  "key": "HADOOP-58",
+  "project": "",
+  "fields": {
+    "summary": "Hadoop requires configuration of hadoop-site.xml or won't run",
+    "description": "On a new install, I would expect '${HADOOP_HOME}/bin/start-all.sh\" to bring up a basic instance, one that is using local filesystem (Or if not, then uses a DFS homed in localhost:/tmp) and that has all four daemons running on localhost.  Currently this is not the case.  Hadoop complains 'java.lang.RuntimeException: Not a host:port pair: local'.  It doesn't like the 'local' default value for mapred.job.tracker and fs.default.name properties.\n\nRevision: 379930\n\n",
+    "created": "2006-02-24 03:43:08+00:00",
+    "updated": "2006-08-03 17:46:29+00:00",
+    "status": {
+      "self": "https://issues.apache.org/jira/rest/api/2/status/6",
+      "description": "The issue is considered finished, the resolution is correct. Issues which are not closed can be reopened.",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/statuses/closed.png",
+      "name": "Closed",
+      "id": "6",
+      "statusCategory": {
+        "self": "https://issues.apache.org/jira/rest/api/2/statuscategory/3",
+        "id": 3,
+        "key": "done",
+        "colorName": "green",
+        "name": "Done"
+      }
+    },
+    "priority": {
+      "self": "https://issues.apache.org/jira/rest/api/2/priority/4",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/priorities/minor.svg",
+      "name": "Minor",
+      "id": "4"
+    },
+    "assignee": null,
+    "reporter": {
+      "self": "https://issues.apache.org/jira/rest/api/2/user?username=stack",
+      "name": "stack",
+      "key": "stack",
+      "avatarUrls": {
+        "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+        "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+        "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+        "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+      },
+      "displayName": "Michael Stack",
+      "active": true,
+      "timeZone": "America/Los_Angeles"
+    },
+    "issue_type": {
+      "self": "https://issues.apache.org/jira/rest/api/2/issuetype/1",
+      "id": "1",
+      "description": "A problem which impairs or prevents the functions of the product.",
+      "iconUrl": "https://issues.apache.org/jira/secure/viewavatar?size=xsmall&avatarId=21133&avatarType=issuetype",
+      "name": "Bug",
+      "subtask": false,
+      "avatarId": 21133
+    },
+    "resolution": {
+      "self": "https://issues.apache.org/jira/rest/api/2/resolution/2",
+      "id": "2",
+      "description": "The problem described is an issue which will never be fixed.",
+      "name": "Won't Fix"
+    },
+    "resolutiondate": "2006-02-24 05:15:10+00:00",
+    "comments": null
+  },
+  "comments": [
+    {
+      "id": "12367565",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=stack",
+        "name": "stack",
+        "key": "stack",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Michael Stack",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "Suggested patch that  makes localhost and DFS the default.  Local filesystem might be better as default but looks like more work needed making 'local' work again.",
+      "created": "2006-02-24 04:03:46+00:00",
+      "updated": "2006-02-24 04:03:46+00:00"
+    },
+    {
+      "id": "12367568",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "I don't think we want things to use DFS and TaskTracker/JobTracker by default, since this slows things down and uses more resources than needed when running on a single node.\n\nThe javadoc provides a recommended configuration for \"pseudo-distributed\" use:\n\nhttp://lucene.apache.org/hadoop/docs/api/overview-summary.html\n\nWith that in place, bin/start-all.sh works fine, no?",
+      "created": "2006-02-24 04:14:10+00:00",
+      "updated": "2006-02-24 04:14:10+00:00"
+    },
+    {
+      "id": "12367572",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=stack",
+        "name": "stack",
+        "key": "stack",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Michael Stack",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "Feels like the 'pseudo-distributed' additions to hadoop-site.xml should be default config. in hadoop-default.xml but then I suppose that would preclude 'standalone operation'.\n\nThanks for pointer to the doc. It clarifies how things are meant to work.\n\nPlease close this issue.",
+      "created": "2006-02-24 04:56:31+00:00",
+      "updated": "2006-02-24 04:56:31+00:00"
+    },
+    {
+      "id": "12367574",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "I'm closing this.  The default configuration supports standalone, in-process operation, and there's a well-documented way to achieve standalone multi-process operation (aka \"pseudo distributed').",
+      "created": "2006-02-24 05:15:10+00:00",
+      "updated": "2006-02-24 05:15:10+00:00"
+    }
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "key": "HADOOP-272",
+  "project": "HADOOP",
+  "fields": {
+    "summary": "bin/hadoop dfs -rm <dir> crashes in log4j code",
+    "description": "When I run \"bin/hadoop dfs -rm out-dir\" I get the following error messages:\n\nlog4j:ERROR setFile(null,true) call failed.\njava.io.FileNotFoundException: /local/owen/hadoop/run/log (Is a directory)\n        at java.io.FileOutputStream.openAppend(Native Method)\n        at java.io.FileOutputStream.<init>(FileOutputStream.java:177)\n        at java.io.FileOutputStream.<init>(FileOutputStream.java:102)\n        at org.apache.log4j.FileAppender.setFile(FileAppender.java:289)\n        at org.apache.log4j.FileAppender.activateOptions(FileAppender.java:163)\n        at org.apache.log4j.DailyRollingFileAppender.activateOptions(DailyRollingFileAppender.java:215)\n        at org.apache.log4j.config.PropertySetter.activate(PropertySetter.java:256)\n        at org.apache.log4j.config.PropertySetter.setProperties(PropertySetter.java:132)\n        at org.apache.log4j.config.PropertySetter.setProperties(PropertySetter.java:96)\n        at org.apache.log4j.PropertyConfigurator.parseAppender(PropertyConfigurator.java:654)\n        at org.apache.log4j.PropertyConfigurator.parseCategory(PropertyConfigurator.java:612)\n        at org.apache.log4j.PropertyConfigurator.configureRootCategory(PropertyConfigurator.java:509)\n        at org.apache.log4j.PropertyConfigurator.doConfigure(PropertyConfigurator.java:415)\n        at org.apache.log4j.PropertyConfigurator.doConfigure(PropertyConfigurator.java:441)\n        at org.apache.log4j.helpers.OptionConverter.selectAndConfigure(OptionConverter.java:468)\n        at org.apache.log4j.LogManager.<clinit>(LogManager.java:122)\n        at org.apache.log4j.Logger.getLogger(Logger.java:104)\n        at org.apache.commons.logging.impl.Log4JLogger.getLogger(Log4JLogger.java:229)\n        at org.apache.commons.logging.impl.Log4JLogger.<init>(Log4JLogger.java:65)\n        at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)\n        at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:39)\n        at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:27)\n        at java.lang.reflect.Constructor.newInstance(Constructor.java:494)\n        at org.apache.commons.logging.impl.LogFactoryImpl.newInstance(LogFactoryImpl.java:529)\n        at org.apache.commons.logging.impl.LogFactoryImpl.getInstance(LogFactoryImpl.java:235)\n        at org.apache.commons.logging.LogFactory.getLog(LogFactory.java:370)\n        at org.apache.hadoop.conf.Configuration.<clinit>(Configuration.java:54)\n        at org.apache.hadoop.dfs.DFSShell.main(DFSShell.java:307)\nlog4j:ERROR Either File or DatePattern options are not set for appender [DRFA].\nDelete failed\n",
+    "created": "2006-06-03 06:03:04+00:00",
+    "updated": "2006-08-03 17:46:45+00:00",
+    "status": {
+      "self": "https://issues.apache.org/jira/rest/api/2/status/6",
+      "description": "The issue is considered finished, the resolution is correct. Issues which are not closed can be reopened.",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/statuses/closed.png",
+      "name": "Closed",
+      "id": "6",
+      "statusCategory": {
+        "self": "https://issues.apache.org/jira/rest/api/2/statuscategory/3",
+        "id": 3,
+        "key": "done",
+        "colorName": "green",
+        "name": "Done"
+      }
+    },
+    "priority": {
+      "self": "https://issues.apache.org/jira/rest/api/2/priority/3",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/priorities/major.svg",
+      "name": "Major",
+      "id": "3"
+    },
+    "assignee": {
+      "self": "https://issues.apache.org/jira/rest/api/2/user?username=omalley",
+      "name": "omalley",
+      "key": "owen.omalley",
+      "avatarUrls": {
+        "48x48": "https://issues.apache.org/jira/secure/useravatar?ownerId=owen.omalley&avatarId=54139",
+        "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=owen.omalley&avatarId=54139",
+        "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=owen.omalley&avatarId=54139",
+        "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=owen.omalley&avatarId=54139"
+      },
+      "displayName": "Owen O'Malley",
+      "active": true,
+      "timeZone": "America/Los_Angeles"
+    },
+    "reporter": {
+      "self": "https://issues.apache.org/jira/rest/api/2/user?username=omalley",
+      "name": "omalley",
+      "key": "owen.omalley",
+      "avatarUrls": {
+        "48x48": "https://issues.apache.org/jira/secure/useravatar?ownerId=owen.omalley&avatarId=54139",
+        "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=owen.omalley&avatarId=54139",
+        "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=owen.omalley&avatarId=54139",
+        "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=owen.omalley&avatarId=54139"
+      },
+      "displayName": "Owen O'Malley",
+      "active": true,
+      "timeZone": "America/Los_Angeles"
+    },
+    "issue_type": {
+      "self": "https://issues.apache.org/jira/rest/api/2/issuetype/1",
+      "id": "1",
+      "description": "A problem which impairs or prevents the functions of the product.",
+      "iconUrl": "https://issues.apache.org/jira/secure/viewavatar?size=xsmall&avatarId=21133&avatarType=issuetype",
+      "name": "Bug",
+      "subtask": false,
+      "avatarId": 21133
+    },
+    "resolution": {
+      "self": "https://issues.apache.org/jira/rest/api/2/resolution/1",
+      "id": "1",
+      "description": "A fix for this issue is checked into the tree and tested.",
+      "name": "Fixed"
+    },
+    "resolutiondate": "2006-06-03 06:41:54+00:00",
+    "comments": null
+  },
+  "comments": [
+    {
+      "id": "12414536",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "I just fixed this.",
+      "created": "2006-06-03 06:41:54+00:00",
+      "updated": "2006-06-03 06:41:54+00:00"
+    }
+  ]
+}

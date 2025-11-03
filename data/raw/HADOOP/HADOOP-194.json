@@ -1,0 +1,116 @@
+{
+  "key": "HADOOP-194",
+  "project": "HADOOP",
+  "fields": {
+    "summary": "Distributed checkup of the file system consistency.",
+    "description": "This is a map-reduce based test that checks consistency of the file system\nby  reading all blocks of all files, and detecting which of them are missing or corrupted.\nSee HADOOP-95 and HADOOP-101 for related discussions.\n\nThis could be an alternative to the sequential checkup in dfsck.\nIt would be nice to integrate distributed checkup with dfsck, but I don't yet see how.\n\nThis test reuses classes defined in HADOOP-193.\n",
+    "created": "2006-05-04 09:11:48+00:00",
+    "updated": "2006-08-03 17:46:40+00:00",
+    "status": {
+      "self": "https://issues.apache.org/jira/rest/api/2/status/6",
+      "description": "The issue is considered finished, the resolution is correct. Issues which are not closed can be reopened.",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/statuses/closed.png",
+      "name": "Closed",
+      "id": "6",
+      "statusCategory": {
+        "self": "https://issues.apache.org/jira/rest/api/2/statuscategory/3",
+        "id": 3,
+        "key": "done",
+        "colorName": "green",
+        "name": "Done"
+      }
+    },
+    "priority": {
+      "self": "https://issues.apache.org/jira/rest/api/2/priority/3",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/priorities/major.svg",
+      "name": "Major",
+      "id": "3"
+    },
+    "assignee": {
+      "self": "https://issues.apache.org/jira/rest/api/2/user?username=shv",
+      "name": "shv",
+      "key": "shv",
+      "avatarUrls": {
+        "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+        "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+        "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+        "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+      },
+      "displayName": "Konstantin Shvachko",
+      "active": true,
+      "timeZone": "America/Los_Angeles"
+    },
+    "reporter": {
+      "self": "https://issues.apache.org/jira/rest/api/2/user?username=shv",
+      "name": "shv",
+      "key": "shv",
+      "avatarUrls": {
+        "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+        "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+        "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+        "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+      },
+      "displayName": "Konstantin Shvachko",
+      "active": true,
+      "timeZone": "America/Los_Angeles"
+    },
+    "issue_type": {
+      "self": "https://issues.apache.org/jira/rest/api/2/issuetype/6",
+      "id": "6",
+      "description": "A new unit, integration or system test.",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/issuetypes/requirement.png",
+      "name": "Test",
+      "subtask": false
+    },
+    "resolution": {
+      "self": "https://issues.apache.org/jira/rest/api/2/resolution/1",
+      "id": "1",
+      "description": "A fix for this issue is checked into the tree and tested.",
+      "name": "Fixed"
+    },
+    "resolutiondate": "2006-05-04 11:40:04+00:00",
+    "comments": null
+  },
+  "comments": [
+    {
+      "id": "12377680",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=shv",
+        "name": "shv",
+        "key": "shv",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Konstantin Shvachko",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "Should be applied after HADOOP-193.",
+      "created": "2006-05-04 09:12:59+00:00",
+      "updated": "2006-05-04 09:12:59+00:00"
+    },
+    {
+      "id": "12377706",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "I just committed this.  Thanks, Konstantin.",
+      "created": "2006-05-04 11:40:04+00:00",
+      "updated": "2006-05-04 11:40:04+00:00"
+    }
+  ]
+}

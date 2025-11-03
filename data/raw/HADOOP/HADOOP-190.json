@@ -1,0 +1,104 @@
+{
+  "key": "HADOOP-190",
+  "project": "HADOOP",
+  "fields": {
+    "summary": "Job fails though task succeeded if we fail to exit",
+    "description": "This is an odd case.  Main cause will be programmer error but I suppose it could happen during normal processing. Whichever, would be grand if hadoop was better able to deal.\n\nMy map task completed 'successfully' but because I had started threads inside in my task that were not set to be of daemon type that under certain circumstances were left running,  my child stuck around after reporting 'done' -- the JVM wouldn't go down while non-daemon threads still running.  After ten minutes, TT steps in,  kills the child and does cleanup of the successful output.  Because JT has been told the task completed successfully, reducers keep showing up looking for the output now removed -- until the job fails.\n\nBelow is illustration of the problem using log output:\n\n....\n060501 090401 task_0001_m_000798_0 0.99491096% adding http://www.score.umd.edu/a\num.jpg 24891 image/jpeg\n060501 090401 task_0001_m_000798_0 1.0% adding http://www.score.umd.edu/album.jp\n24891 image/jpeg\n060501 090401 Task task_0001_m_000798_0 is done.\n...\n060501 091410 task_0001_m_000798_0: Task failed to report status for 608 seconds\nKilling.\n....\n060501 091410 Calling cleanup because was killed or FAILED task_0001_m_000798_0\n060501 091410 task_0001_m_000798_0 done; removing files.\n\nThen, subsequently....\n\n060501 091422 SEVERE Can't open map output:/1/hadoop/tmp/task_0001_m_000798_0/pa\n-12.out\njava.io.FileNotFoundException: LocalFS\n...\n\nand on and on.",
+    "created": "2006-05-03 04:28:56+00:00",
+    "updated": "2006-08-03 17:46:39+00:00",
+    "status": {
+      "self": "https://issues.apache.org/jira/rest/api/2/status/6",
+      "description": "The issue is considered finished, the resolution is correct. Issues which are not closed can be reopened.",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/statuses/closed.png",
+      "name": "Closed",
+      "id": "6",
+      "statusCategory": {
+        "self": "https://issues.apache.org/jira/rest/api/2/statuscategory/3",
+        "id": 3,
+        "key": "done",
+        "colorName": "green",
+        "name": "Done"
+      }
+    },
+    "priority": {
+      "self": "https://issues.apache.org/jira/rest/api/2/priority/3",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/priorities/major.svg",
+      "name": "Major",
+      "id": "3"
+    },
+    "assignee": null,
+    "reporter": {
+      "self": "https://issues.apache.org/jira/rest/api/2/user?username=stack",
+      "name": "stack",
+      "key": "stack",
+      "avatarUrls": {
+        "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+        "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+        "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+        "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+      },
+      "displayName": "Michael Stack",
+      "active": true,
+      "timeZone": "America/Los_Angeles"
+    },
+    "issue_type": {
+      "self": "https://issues.apache.org/jira/rest/api/2/issuetype/1",
+      "id": "1",
+      "description": "A problem which impairs or prevents the functions of the product.",
+      "iconUrl": "https://issues.apache.org/jira/secure/viewavatar?size=xsmall&avatarId=21133&avatarType=issuetype",
+      "name": "Bug",
+      "subtask": false,
+      "avatarId": 21133
+    },
+    "resolution": {
+      "self": "https://issues.apache.org/jira/rest/api/2/resolution/1",
+      "id": "1",
+      "description": "A fix for this issue is checked into the tree and tested.",
+      "name": "Fixed"
+    },
+    "resolutiondate": "2006-05-03 05:54:01+00:00",
+    "comments": null
+  },
+  "comments": [
+    {
+      "id": "12377475",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=stack",
+        "name": "stack",
+        "key": "stack",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Michael Stack",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "Here's a suggested patch.  If task has been marked 'done', don't remove the output (I haven't tested this patch -- the condition is awkward to manufacture).",
+      "created": "2006-05-03 04:31:24+00:00",
+      "updated": "2006-05-03 04:31:24+00:00"
+    },
+    {
+      "id": "12377486",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "I applied this patch.  Thanks, Michael.",
+      "created": "2006-05-03 05:54:01+00:00",
+      "updated": "2006-05-03 05:54:01+00:00"
+    }
+  ]
+}

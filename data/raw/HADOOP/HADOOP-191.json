@@ -1,0 +1,237 @@
+{
+  "key": "HADOOP-191",
+  "project": "HADOOP",
+  "fields": {
+    "summary": "add hadoopStreaming to src/contrib",
+    "description": "This is a patch that adds a src/contrib/hadoopStreaming directory to the source tree.\nhadoopStreaming is a bridge to run non-Java code as Map/Reduce tasks.\nThe unit test TestStreaming runs the Unix tools tr (as Map) and uniq (as Reduce)\n\n\nTO test the patch: \nMerge the patch. \nThe only existing file that is modified is trunk/build.xml\ntrunk>ant deploy-contrib\ntrunk>bin/hadoopStreaming : should show usage message\ntrunk>ant test-contrib    : should run one test successfully\n\nTO add src/contrib/someOtherProject:\nedit src/contrib/build.xml\n\n\n\n",
+    "created": "2006-05-03 05:10:00+00:00",
+    "updated": "2006-08-03 17:46:40+00:00",
+    "status": {
+      "self": "https://issues.apache.org/jira/rest/api/2/status/6",
+      "description": "The issue is considered finished, the resolution is correct. Issues which are not closed can be reopened.",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/statuses/closed.png",
+      "name": "Closed",
+      "id": "6",
+      "statusCategory": {
+        "self": "https://issues.apache.org/jira/rest/api/2/statuscategory/3",
+        "id": 3,
+        "key": "done",
+        "colorName": "green",
+        "name": "Done"
+      }
+    },
+    "priority": {
+      "self": "https://issues.apache.org/jira/rest/api/2/priority/3",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/priorities/major.svg",
+      "name": "Major",
+      "id": "3"
+    },
+    "assignee": {
+      "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+      "name": "cutting",
+      "key": "cutting",
+      "avatarUrls": {
+        "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+        "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+        "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+        "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+      },
+      "displayName": "Doug Cutting",
+      "active": true,
+      "timeZone": "America/Los_Angeles"
+    },
+    "reporter": {
+      "self": "https://issues.apache.org/jira/rest/api/2/user?username=michel_tourn",
+      "name": "michel_tourn",
+      "key": "michel_tourn",
+      "avatarUrls": {
+        "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+        "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+        "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+        "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+      },
+      "displayName": "Michel Tourn",
+      "active": true,
+      "timeZone": "America/New_York"
+    },
+    "issue_type": {
+      "self": "https://issues.apache.org/jira/rest/api/2/issuetype/2",
+      "id": "2",
+      "description": "A new feature of the product, which has yet to be developed.",
+      "iconUrl": "https://issues.apache.org/jira/secure/viewavatar?size=xsmall&avatarId=21141&avatarType=issuetype",
+      "name": "New Feature",
+      "subtask": false,
+      "avatarId": 21141
+    },
+    "resolution": {
+      "self": "https://issues.apache.org/jira/rest/api/2/resolution/1",
+      "id": "1",
+      "description": "A fix for this issue is checked into the tree and tested.",
+      "name": "Fixed"
+    },
+    "resolutiondate": "2006-05-24 02:40:26+00:00",
+    "comments": null
+  },
+  "comments": [
+    {
+      "id": "12377480",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=michel_tourn",
+        "name": "michel_tourn",
+        "key": "michel_tourn",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Michel Tourn",
+        "active": true,
+        "timeZone": "America/New_York"
+      },
+      "body": "The usage message:\n\nhadoop-trunk>bin/hadoopStreaming\n\nUsage: hadoopStreaming [options]\nOptions:\n  -input   <path>     DFS input file(s) for the Map step\n  -output  <path>     DFS output directory for the Reduce step\n  -mapper  <cmd>      The streaming command to run\n  -reducer <cmd>      The streaming command to run\n  -files   <file>     Additional files to be shipped in the Job jar file\n  -cluster <name>     Default uses hadoop-default.xml and hadoop-site.xml\n  -config  <file>     Optional. One or more paths to xml config files\n  -inputreader <spec> Optional. See below\n  -verbose\n\nIn -input: globbing on <path> is supported and can have multiple -input\nDefault Map input format: a line is a record in UTF-8\n  the key part ends at first TAB, the rest of the line is the value\nCustom Map input format: -inputreader package.MyRecordReader,n=v,n=v\n  comma-separated name-values can be specified to configure the InputFormat\n  Ex: -inputreader 'StreamXmlRecordReader,begin=<doc>,end=</doc>'\nMap output format, reduce input/output format:\n  Format defined by what mapper command outputs. Line-oriented\nMapper and Reducer <cmd> syntax:\n  If the mapper or reducer programs are prefixed with noship: then\n  the paths are assumed to be valid absolute paths on the task tracker machines\n  and are NOT packaged with the Job jar file.\nUse -cluster <name> to switch between \"local\" Hadoop and one or more remote\n  Hadoop clusters.\n  The default is to use the normal hadoop-default.xml and hadoop-site.xml\n  Else configuration will use $HADOOP_HOME/conf/hadoop-<name>.xml\n\nExample: hadoopStreaming -mapper \"noship:/usr/local/bin/perl5 filter.pl\"\n           -files /local/filter.pl -input \"/logs/0604*/*\" [...]\n  Ships a script, invokes the non-shipped perl interpreter\n  Shipped files go to the working directory so filter.pl is found by perl\n  Input files are all the daily logs for days in month 2006-04\n",
+      "created": "2006-05-03 05:17:17+00:00",
+      "updated": "2006-05-03 05:17:17+00:00"
+    },
+    {
+      "id": "12377484",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "Most of the changes to the top-level build.xml don't seem to be required, and a number are spurious whitespace and comment changes.  It seems to build fine with only the new targets added.\n\nAlso, is the new bin/ script required?  Won't 'bin/hadoop jar build/hadoop-streaming.jar ...' suffice?  (You'll need to set the \"Main-Class\" attribute in the jar's manifest.)\n",
+      "created": "2006-05-03 05:43:51+00:00",
+      "updated": "2006-05-03 05:43:51+00:00"
+    },
+    {
+      "id": "12377487",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=michel_tourn",
+        "name": "michel_tourn",
+        "key": "michel_tourn",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Michel Tourn",
+        "active": true,
+        "timeZone": "America/New_York"
+      },
+      "body": ">top-level build.xml : \nOK, I can remove the unnecessary changes.\nWhich contrib targets would you keep in?\nI mimicked deploy-contrib, test-contrib, clean-contrib on Nutch plugins.\n(It is true that for now the new targets are not required since the nightly target does not call them.)\n\n>bin/hadoop jar build/hadoop-streaming.jar ...\nLooks cleaner. I'll try to do it this way\n\n",
+      "created": "2006-05-03 06:00:00+00:00",
+      "updated": "2006-05-03 06:00:00+00:00"
+    },
+    {
+      "id": "12377488",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "I'm okay with all the contrib targets.  But all of the other changes to that file seem spurious.  The new properties are unused and the directory created will be created by another build script anyway.",
+      "created": "2006-05-03 06:10:20+00:00",
+      "updated": "2006-05-03 06:10:20+00:00"
+    },
+    {
+      "id": "12377501",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=michel_tourn",
+        "name": "michel_tourn",
+        "key": "michel_tourn",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Michel Tourn",
+        "active": true,
+        "timeZone": "America/New_York"
+      },
+      "body": "Updated patch:\n\n1. top-level build.xml has 3 contrib targets and no other changes.\n\n2. script hadoopStreaming is gone. \nnew Usage message: \nbin/hadoop jar build/hadoop-streaming.jar [options]\n\n3. removed some spurious exec permissions on  source files\n",
+      "created": "2006-05-03 06:59:20+00:00",
+      "updated": "2006-05-03 06:59:20+00:00"
+    },
+    {
+      "id": "12377632",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "I just committed this.  It looks great!  Thanks, Michel.",
+      "created": "2006-05-04 04:00:25+00:00",
+      "updated": "2006-05-04 04:00:25+00:00"
+    },
+    {
+      "id": "12412054",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=michel_tourn",
+        "name": "michel_tourn",
+        "key": "michel_tourn",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Michel Tourn",
+        "active": true,
+        "timeZone": "America/New_York"
+      },
+      "body": "An update to hadoop-streaming.\n\n",
+      "created": "2006-05-17 03:56:18+00:00",
+      "updated": "2006-05-17 03:56:18+00:00"
+    },
+    {
+      "id": "12412055",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=michel_tourn",
+        "name": "michel_tourn",
+        "key": "michel_tourn",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Michel Tourn",
+        "active": true,
+        "timeZone": "America/New_York"
+      },
+      "body": "This patch depends on the LargeUTF8 patch:  http://issues.apache.org/jira/browse/HADOOP-136\n\n\nAdded a few more configurable options.\n\nmichel@cdev2004> bin/hadoop jar build/hadoop-streaming.jar -info\nUsage: $HADOOP_HOME/bin/hadoop jar build/hadoop-streaming.jar [options]\nOptions:\n  -input    <path>     DFS input file(s) for the Map step\n  -output   <path>     DFS output directory for the Reduce step\n  -mapper   <cmd>      The streaming command to run\n  -combiner <cmd>      Not implemented. But you can pipe the mapper output\n  -reducer  <cmd>      The streaming command to run\n  -file     <file>     File/dir to be shipped in the Job jar file\n  -cluster  <name>     Default uses hadoop-default.xml and hadoop-site.xml\n  -config   <file>     Optional. One or more paths to xml config files\n  -dfs      <h:p>      Optional. Override DFS configuration\n  -jt       <h:p>      Optional. Override JobTracker configuration\n  -inputreader <spec>  Optional.\n  -jobconf  <n>=<v>    Optional.\n  -cmdenv   <n>=<v>    Optional. Pass env.var to streaming commands\n  -verbose\n\nFor more details about these options:\nUse $HADOOP_HOME/bin/hadoop jar build/hadoop-streaming.jar -info\n",
+      "created": "2006-05-17 03:57:17+00:00",
+      "updated": "2006-05-17 03:57:17+00:00"
+    }
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "key": "HADOOP-22",
+  "project": "",
+  "fields": {
+    "summary": "remove unused imports",
+    "description": "Following patch will remove unused imports from java source files",
+    "created": "2006-02-07 04:33:17+00:00",
+    "updated": "2006-08-03 17:46:26+00:00",
+    "status": {
+      "self": "https://issues.apache.org/jira/rest/api/2/status/6",
+      "description": "The issue is considered finished, the resolution is correct. Issues which are not closed can be reopened.",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/statuses/closed.png",
+      "name": "Closed",
+      "id": "6",
+      "statusCategory": {
+        "self": "https://issues.apache.org/jira/rest/api/2/statuscategory/3",
+        "id": 3,
+        "key": "done",
+        "colorName": "green",
+        "name": "Done"
+      }
+    },
+    "priority": {
+      "self": "https://issues.apache.org/jira/rest/api/2/priority/5",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/priorities/trivial.svg",
+      "name": "Trivial",
+      "id": "5"
+    },
+    "assignee": null,
+    "reporter": {
+      "self": "https://issues.apache.org/jira/rest/api/2/user?username=siren",
+      "name": "siren",
+      "key": "siren",
+      "avatarUrls": {
+        "48x48": "https://issues.apache.org/jira/secure/useravatar?ownerId=siren&avatarId=11533",
+        "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=siren&avatarId=11533",
+        "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=siren&avatarId=11533",
+        "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=siren&avatarId=11533"
+      },
+      "displayName": "Sami Siren",
+      "active": true,
+      "timeZone": "Europe/Helsinki"
+    },
+    "issue_type": {
+      "self": "https://issues.apache.org/jira/rest/api/2/issuetype/1",
+      "id": "1",
+      "description": "A problem which impairs or prevents the functions of the product.",
+      "iconUrl": "https://issues.apache.org/jira/secure/viewavatar?size=xsmall&avatarId=21133&avatarType=issuetype",
+      "name": "Bug",
+      "subtask": false,
+      "avatarId": 21133
+    },
+    "resolution": {
+      "self": "https://issues.apache.org/jira/rest/api/2/resolution/1",
+      "id": "1",
+      "description": "A fix for this issue is checked into the tree and tested.",
+      "name": "Fixed"
+    },
+    "resolutiondate": "2006-02-07 04:50:07+00:00",
+    "comments": null
+  },
+  "comments": [
+    {
+      "id": "12365333",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "I just applied this.  Thanks, Sami.  Sorry I messed this up the first time...",
+      "created": "2006-02-07 04:50:07+00:00",
+      "updated": "2006-02-07 04:50:07+00:00"
+    }
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "key": "HADOOP-229",
+  "project": "",
+  "fields": {
+    "summary": "hadoop cp should generate a better number of map tasks",
+    "description": "hadoop cp currently assigns 10 files to copy per map task.\nin case of a small number of large files on a large cluster (say 300 files of 30GB each on a 300 node cluster), this results in long execution times.\nbetter would be to assign files per task such that the entire cluster is utilized: one file per map, with a cap of 10000 maps total, so as not to over burden the job tracker.",
+    "created": "2006-05-18 07:22:37+00:00",
+    "updated": "2006-08-03 17:46:42+00:00",
+    "status": {
+      "self": "https://issues.apache.org/jira/rest/api/2/status/6",
+      "description": "The issue is considered finished, the resolution is correct. Issues which are not closed can be reopened.",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/statuses/closed.png",
+      "name": "Closed",
+      "id": "6",
+      "statusCategory": {
+        "self": "https://issues.apache.org/jira/rest/api/2/statuscategory/3",
+        "id": 3,
+        "key": "done",
+        "colorName": "green",
+        "name": "Done"
+      }
+    },
+    "priority": {
+      "self": "https://issues.apache.org/jira/rest/api/2/priority/4",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/priorities/minor.svg",
+      "name": "Minor",
+      "id": "4"
+    },
+    "assignee": {
+      "self": "https://issues.apache.org/jira/rest/api/2/user?username=milindb",
+      "name": "milindb",
+      "key": "milindb",
+      "avatarUrls": {
+        "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+        "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+        "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+        "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+      },
+      "displayName": "Milind Barve",
+      "active": true,
+      "timeZone": "America/Los_Angeles"
+    },
+    "reporter": {
+      "self": "https://issues.apache.org/jira/rest/api/2/user?username=yarnon",
+      "name": "yarnon",
+      "key": "yarnon",
+      "avatarUrls": {
+        "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+        "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+        "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+        "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+      },
+      "displayName": "Yoram Arnon",
+      "active": true,
+      "timeZone": "Etc/UTC"
+    },
+    "issue_type": {
+      "self": "https://issues.apache.org/jira/rest/api/2/issuetype/1",
+      "id": "1",
+      "description": "A problem which impairs or prevents the functions of the product.",
+      "iconUrl": "https://issues.apache.org/jira/secure/viewavatar?size=xsmall&avatarId=21133&avatarType=issuetype",
+      "name": "Bug",
+      "subtask": false,
+      "avatarId": 21133
+    },
+    "resolution": {
+      "self": "https://issues.apache.org/jira/rest/api/2/resolution/1",
+      "id": "1",
+      "description": "A fix for this issue is checked into the tree and tested.",
+      "name": "Fixed"
+    },
+    "resolutiondate": "2006-05-20 02:53:02+00:00",
+    "comments": null
+  },
+  "comments": [
+    {
+      "id": "12412420",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=milindb",
+        "name": "milindb",
+        "key": "milindb",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Milind Barve",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "Number of maps is now computed as follows:\n\nnumMaps = max(1, min(numFiles,  numNodes*10, totalBytes/256MB, 10000)).\n\nPlus added reporting status for every file (or every 32MB - approx 10 seconds) so that tasks dont timeout while copying huge files.\n\nThis fix is part of the patch attached to hadoop-220.",
+      "created": "2006-05-19 03:56:11+00:00",
+      "updated": "2006-05-19 03:56:11+00:00"
+    }
+  ]
+}

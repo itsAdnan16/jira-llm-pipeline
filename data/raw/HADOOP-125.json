@@ -1,0 +1,137 @@
+{
+  "key": "HADOOP-125",
+  "project": "",
+  "fields": {
+    "summary": "LocalFileSystem.makeAbsolute bug on Windows",
+    "description": "\nLocalFileSystem.makeAbsolute() has a bug when running on Windows (which is very useful for the development phase of a Hadoop task on one's laptop).\n\nProblem:  if a pathname such as /tmp/hadoop... is given in a config file, when the jobconf file is created, it is put into the relative directory named: currentdir/tmp/hadoop..., but when hadoop tries to open the file, it looks in c:/tmp/hadoop..., and the job fails.\n\nCause: while Unix has two kinds of filespecs (relative and absolute), WIndows actually has three:\n\n(1) relative to current directory (subdir/file)\n(2) relative to current disk (/dir/subdir/file)\n(3) absolute (c:/dir/subdir/file)\n\nSo when a config file specifies a directory with what-is-on-unix an absolute path (/tmp/hadoop...), the makeAbsolute() method will not work correctly. Basically, File.isAbsolute() will return false for cases (1) and (2) above, but true for case (3), which is not expected by the code below. \n\nThe solution would be to code explicit detection of all three casses for Windows in the code below from LocalFileSystem:\n\n    private File makeAbsolute(File f) {\n      if (f.isAbsolute()) {\n        return f;\n      } else {\n        return new File(workingDir, f.toString());\n      }\n    }\n\nIm happy to explain if this explanation is confusing... ",
+    "created": "2006-04-08 06:43:59+00:00",
+    "updated": "2006-08-03 17:46:35+00:00",
+    "status": {
+      "self": "https://issues.apache.org/jira/rest/api/2/status/6",
+      "description": "The issue is considered finished, the resolution is correct. Issues which are not closed can be reopened.",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/statuses/closed.png",
+      "name": "Closed",
+      "id": "6",
+      "statusCategory": {
+        "self": "https://issues.apache.org/jira/rest/api/2/statuscategory/3",
+        "id": 3,
+        "key": "done",
+        "colorName": "green",
+        "name": "Done"
+      }
+    },
+    "priority": {
+      "self": "https://issues.apache.org/jira/rest/api/2/priority/4",
+      "iconUrl": "https://issues.apache.org/jira/images/icons/priorities/minor.svg",
+      "name": "Minor",
+      "id": "4"
+    },
+    "assignee": {
+      "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+      "name": "cutting",
+      "key": "cutting",
+      "avatarUrls": {
+        "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+        "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+        "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+        "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+      },
+      "displayName": "Doug Cutting",
+      "active": true,
+      "timeZone": "America/Los_Angeles"
+    },
+    "reporter": {
+      "self": "https://issues.apache.org/jira/rest/api/2/user?username=psutter",
+      "name": "psutter",
+      "key": "psutter",
+      "avatarUrls": {
+        "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+        "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+        "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+        "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+      },
+      "displayName": "Peter Sutter",
+      "active": true,
+      "timeZone": "Etc/UTC"
+    },
+    "issue_type": {
+      "self": "https://issues.apache.org/jira/rest/api/2/issuetype/1",
+      "id": "1",
+      "description": "A problem which impairs or prevents the functions of the product.",
+      "iconUrl": "https://issues.apache.org/jira/secure/viewavatar?size=xsmall&avatarId=21133&avatarType=issuetype",
+      "name": "Bug",
+      "subtask": false,
+      "avatarId": 21133
+    },
+    "resolution": {
+      "self": "https://issues.apache.org/jira/rest/api/2/resolution/1",
+      "id": "1",
+      "description": "A fix for this issue is checked into the tree and tested.",
+      "name": "Fixed"
+    },
+    "resolutiondate": "2006-04-08 07:27:21+00:00",
+    "comments": null
+  },
+  "comments": [
+    {
+      "id": "12373694",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "I just fixed this.",
+      "created": "2006-04-08 07:27:18+00:00",
+      "updated": "2006-04-08 07:27:18+00:00"
+    },
+    {
+      "id": "12373713",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=omalley",
+        "name": "omalley",
+        "key": "owen.omalley",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?ownerId=owen.omalley&avatarId=54139",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&ownerId=owen.omalley&avatarId=54139",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&ownerId=owen.omalley&avatarId=54139",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&ownerId=owen.omalley&avatarId=54139"
+        },
+        "displayName": "Owen O'Malley",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "Doug,\n   Doesn't your fix break on unix if the user has a directory named \"\\\\foo\"? Certainly it would be a strange name, but it is legal. I was also curious why you took out setting the System property. It was convienent to be able to set the working directory on the local file system and be able to use File.getAbsolutePath(). Could we extend the FileSystem interface to add makeAbsolute?",
+      "created": "2006-04-08 15:09:28+00:00",
+      "updated": "2006-04-08 15:09:28+00:00"
+    },
+    {
+      "id": "12373917",
+      "author": {
+        "self": "https://issues.apache.org/jira/rest/api/2/user?username=cutting",
+        "name": "cutting",
+        "key": "cutting",
+        "avatarUrls": {
+          "48x48": "https://issues.apache.org/jira/secure/useravatar?avatarId=10452",
+          "24x24": "https://issues.apache.org/jira/secure/useravatar?size=small&avatarId=10452",
+          "16x16": "https://issues.apache.org/jira/secure/useravatar?size=xsmall&avatarId=10452",
+          "32x32": "https://issues.apache.org/jira/secure/useravatar?size=medium&avatarId=10452"
+        },
+        "displayName": "Doug Cutting",
+        "active": true,
+        "timeZone": "America/Los_Angeles"
+      },
+      "body": "> Doesn't your fix break on unix if the user has a directory named \"\\\\foo\"?\n\nPerhaps.  I did not test this case.  I was just despately trying to get Nutch to work correctly standalone & pseudo-distributed on Windows and linux.  There may still be bugs.\n\nChanging the global system directory caused strange behaviour on Windows, and also seems like a bad idea.  Isn't the point of a default directory for job and fs instances to insulate them from the global system default directory?  We do currently cache the LocalFs instance, which may be a bug, but changing the process's CWD affects other applications in the JVM (like even our own datanode & namenode) which might not expect the CWD to move under them.\n\n> Could we extend the FileSystem interface to add makeAbsolute?\n\nThe long-term fix that I'd like to see is that we stop using java.io.File for file names.  We could use String, we could use our own FileName class, or we could perhaps use java.net.URI.  The advantage of URI is that it can also naturally include the namenode host and port.  The disadvantage is that URI does not support tree operations like getParent().  I'll log a bug for this.",
+      "created": "2006-04-11 02:56:28+00:00",
+      "updated": "2006-04-11 02:56:28+00:00"
+    }
+  ]
+}
